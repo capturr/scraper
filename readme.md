@@ -6,7 +6,7 @@ Soon
 
 ## Usage Example
 
-```
+```typescript
 const proxyRotator = new ProxyRotator({
 
     scraperapi: {
