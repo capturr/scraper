@@ -1,0 +1,21 @@
+{
+    "name": "scraper",
+    "version": "0.0.1",
+    "description": "Simple & Human Friendly HTML Scraper with Proxy Rotator",
+    "main": "index.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Gaetan Le Gac",
+    "license": "ISC",
+    "dependencies": {
+        "cheerio": "^1.0.0-rc.10",
+        "condense-whitespace": "^3.0.0",
+        "fs-extra": "^10.0.0",
+        "got": "^11.8.2",
+        "html-entities": "^2.3.2"
+    },
+    "devDependencies": {
+        "typescript": "^4.3.5"
+    }
+}
