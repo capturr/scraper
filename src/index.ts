@@ -16,4 +16,4 @@ export const subset = <TExtractedData extends TDonnees>(
 })
 
 export default { scrape, subset, Proxies: ProxyManager }
-export type ScraperProxies = ProxyManager
+export { ProxyManager as ScraperProxies }
