@@ -7,7 +7,12 @@ Soon
 ## Usage Example
 
 ```typescript
-const proxyRotator = new ProxyRotator({
+
+// Import package
+import Scraper from '@dopamyn/scraper';
+
+// Configure proxy to bypass captcha & other anti-bot verification
+const proxyRotator = new Scraper.Proxies({
 
     scraperapi: {
         prefix: 'http://api.scraperapi.com/?api_key=<apikey>&url=',
@@ -21,6 +26,7 @@ const proxyRotator = new ProxyRotator({
 
 });
 
+// Scrape Cryptocurrencies list
 const result = await Scraper.scrape('google.search', {
     url: 'https://coinmarketcap.com/',
     proxy: proxyRotator,
@@ -46,10 +52,11 @@ const result = await Scraper.scrape('google.search', {
     }),
 })
 
+// Print result
 console.log(result);
 
 /*
-    Prints the following:
+    Prints the following array:
 
     [{
         logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",

@@ -1,13 +1,18 @@
 {
-    "name": "scraper",
+    "name": "@dopamyn/scraper",
     "version": "0.0.1",
+    "private": false,
     "description": "Simple & Human Friendly HTML Scraper with Proxy Rotator",
-    "main": "index.ts",
+    "main": "src/index.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Gaetan Le Gac",
-    "license": "ISC",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/dopamyn/scraper.git"
+    },
     "dependencies": {
         "cheerio": "^1.0.0-rc.10",
         "condense-whitespace": "^3.0.0",

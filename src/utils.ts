@@ -4,6 +4,8 @@
 
 // Npm
 import { CheerioAPI } from 'cheerio';
+import { decode } from 'html-entities';
+import condenseWhitespace from 'condense-whitespace';
 
 /*----------------------------------
 - TYPES
@@ -77,4 +79,8 @@ export const jsonldreader = ($: CheerioAPI) => {
         // Pas trouvé, retourne undefined
         return undefined;
     }
+}
+
+export function parseFromHTML(val: string): string {
+    return condenseWhitespace( decode(val) );
 }
