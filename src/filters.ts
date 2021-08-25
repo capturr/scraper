@@ -2,11 +2,11 @@
 - DEPENDANCES
 ----------------------------------*/
 
-import { TLocale } from '../../PriceAlerts/site/server/src/locale';
+import { TLocale } from '../../../PriceAlerts/site/server/src/locale';
 
 import { decode } from 'html-entities';
 import condenseWhitespace from 'condense-whitespace';
-import iso6393 from '../../PriceAlerts/site/server/src/utils/iso6393';
+import iso6393 from '../../../PriceAlerts/site/server/src/utils/iso6393';
 const iso6393Values = Object.values(iso6393)
 
 /*----------------------------------

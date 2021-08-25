@@ -7,12 +7,17 @@ import fs from 'fs-extra';
 import got, { Options as TGotOptions } from 'got';
 import cheerio, { CheerioAPI, Cheerio, Element, Document, Node } from 'cheerio';
 
-import getProxy from './proxies';
+// Libs
 import { jsonldreader, TJsonldReader } from './utils';
+
+// Types
+import type ProxyRotator from './proxies';
 
 /*----------------------------------
 - CONFIG
 ----------------------------------*/
+
+// TODO: Configure from Scraper instanciation
 
 const dummyDir = 'crawlers/dummy';
 const debugDir = 'crawlers/debug';
@@ -46,8 +51,10 @@ type TExtractionConfig<TExtractedData extends TDonnees, TProcessedData extends T
     gotOptions?: Partial<TGotOptions>
 }
 
-export type TCrawlerConfig<TExtractedData extends TDonnees, TProcessedData extends TDonnees> = ({ url: string } | { html: string }) & {
-    proxy?: boolean
+export type TCrawlerConfig<TExtractedData extends TDonnees, TProcessedData extends TDonnees> = (
+    { url: string } | { html: string }
+) & {
+    proxy?: ProxyRotator<{}>
 } & TExtractionConfig<TExtractedData, TProcessedData>;
 
 /*----------------------------------
@@ -73,8 +80,8 @@ export async function scrape<TExtractedData extends TDonnees, TProcessedData ext
         } else {
 
             let url = crawler.url;
-            if (crawler.proxy === true) {
-                const proxy = await getProxy();
+            if (crawler.proxy !== undefined) {
+                const proxy = await crawler.proxy.get();
                 url = proxy.prefix + url;
             }
 
@@ -84,7 +91,7 @@ export async function scrape<TExtractedData extends TDonnees, TProcessedData ext
                 html = await got(url, {
 
                     // Prend en compte les probabilités d'échec des proxies
-                    retry: crawler.proxy === true ? 5 : 0,
+                    retry: crawler.proxy !== undefined ? 5 : 0,
 
                     ...(crawler.gotOptions || {}),
 
