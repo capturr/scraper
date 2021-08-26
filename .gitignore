@@ -2,3 +2,5 @@
 /package-lock.json
 /bin
 /crawlers/debug
+/.vscode
+/*.code-workspace
