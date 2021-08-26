@@ -3,7 +3,7 @@
 ----------------------------------*/
 
 // Npm
-import { CheerioAPI } from 'cheerio';
+import type { CheerioAPI } from 'cheerio';
 
 /*----------------------------------
 - TYPES
@@ -14,7 +14,7 @@ export type TJsonldReader = (path: any) => any
 /*----------------------------------
 - METHODES
 ----------------------------------*/
-export default ($: CheerioAPI, debug: boolean = false): TJsonldReader => {
+export const getDefinitions = ($: CheerioAPI, debug: boolean = false): any[] => {
 
     let definitions: any[] = [];
     const rawDefinitions = $('script[type="application/ld+json"]');
@@ -36,42 +36,52 @@ export default ($: CheerioAPI, debug: boolean = false): TJsonldReader => {
 
     debug && console.log(`[scraper][jsonld] Définitions:`, definitions);
 
-    return (path: string): any => {
+    return definitions;
+}
 
-        // Extraction branches
-        const [type, ...branches] = path.split('.');
+export const extractData = (path: string, definitions: any[], debug: boolean = false): any => {
 
-        debug && console.log(`[scraper][jsonld] Extraction de:`, type, branches);
+    // Extraction branches
+    const [type, ...branches] = path.split('.');
 
-        // Recherche dans chaque bloc de définition
-        itDefinitions:
-        for (const definition of definitions) {
+    debug && console.log(`[scraper][jsonld] Extraction de:`, type, branches);
 
-            if (definition['@type']?.toLowerCase() !== type)
-                continue;
+    // Recherche dans chaque bloc de définition
+    itDefinitions:
+    for (const definition of definitions) {
 
-            debug && console.log(`[scraper][jsonld] ${type} Trouvé`, definition);
+        if (definition['@type']?.toLowerCase() !== type)
+            continue;
 
-            // Extraction valeur
-            let valeur: any = definition;
-            for (const branche of branches) {
+        debug && console.log(`[scraper][jsonld] ${type} Trouvé`, definition);
 
-                // Impossible d'itérer jusqu'au bout = définition exclue
-                if (typeof valeur !== 'object')
-                    break itDefinitions;
+        // Extraction valeur
+        let valeur: any = definition;
+        for (const branche of branches) {
 
-                valeur = valeur[branche];
-            }
+            // Impossible d'itérer jusqu'au bout = définition exclue
+            if (typeof valeur !== 'object')
+                break itDefinitions;
 
-            debug && console.log(`[scraper][jsonld] Valeur trouvée:`, valeur);
+            valeur = valeur[branche];
+        }
 
-            // Retour si non-nulle
-            if (valeur !== undefined && valeur !== null)
-                return valeur;
+        debug && console.log(`[scraper][jsonld] Valeur trouvée:`, valeur);
 
-        };
+        // Retour si non-nulle
+        if (valeur !== undefined && valeur !== null)
+            return valeur;
 
-        // Pas trouvé, retourne undefined
-        return undefined;
-    }
+    };
+
+    // Pas trouvé, retourne undefined
+    return undefined;
+
+}
+
+export default ($: CheerioAPI, debug: boolean = false): TJsonldReader => {
+
+    const definitions = getDefinitions($, debug);
+
+    return (path: string) => extractData(path, definitions, debug);
 }
