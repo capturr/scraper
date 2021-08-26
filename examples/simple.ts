@@ -16,18 +16,37 @@ const proxyRotator = undefined;/*new Scraper.Proxies({
 
 });*/
 
-// Scrape Cryptocurrencies list
-Scraper.scrape('cryptocurrencies', {
+// Set global configuration
+Scraper.setDefaultOptions({
+    // Show debug infos 
+    debug: true,
+    // Handle errors
+    onError: (type, error, options, scraper) => {
 
+        console.error(
+            `An ${type} error eccured while scraping data from ${options["url"] || 'HTML'}:`,
+            error,
+            '|| options =', options,
+            '|| scraper =', scraper
+        );
+
+    }
+});
+
+// Scrape Cryptocurrencies list
+Scraper.scrape({
+
+    // Identifier for debugging
+    id: 'cryptocurrencies',
     // URL address to scrape
     url: 'https://coinmarketcap.com/',
-
     // Proxy Rotator instance (optional)
     proxy: proxyRotator,
 
+}, {
+
     // Items to iterate (optional)
     items: $ => $('table.cmc-table > tbody > tr'),
-
     // Data to extract for each item
     extract: ($) => ({
 
@@ -38,10 +57,8 @@ Scraper.scrape('cryptocurrencies', {
         price: $('> td:eq(3)').text()
 
     }),
-
     // If name or price cannot be extracted, the item will be excluded from results
     required: ['name', 'price'],
-
     // Normalize / Format the extracted data (optional)
     process: async ({ logo, name, price }) => ({
 
@@ -52,7 +69,7 @@ Scraper.scrape('cryptocurrencies', {
         price: parseFloat( price.trim().replace(/[^\d\.]/g, '') )
 
     }),
-    
+
 }).then((result) => {
 
     // Print result

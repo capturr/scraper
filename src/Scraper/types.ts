@@ -7,7 +7,7 @@ import type { Cheerio, Element } from "cheerio"
 import type { Options as TGotOptions } from 'got';
 
 // Libs
-import type { TJsonldReader } from '../utils';
+import type { TJsonldReader } from '../utils/jsonld';
 import type Proxies from '../ProxyManager';
 
 /*----------------------------------
@@ -17,11 +17,28 @@ export type TDonnees = { [cle: string]: any }
 
 type TFinder = (selector: string) => Cheerio<Element>
 
-type TDataList<TExtractedData extends TDonnees> = {
-    [name in keyof TExtractedData]: /* Extraction */TExtractionConfig<TExtractedData> | /* Raw data */ any
-}
+export type TOptions = (
+    ({ url: string } | { html: string })
+    &
+    {
+        id: string,
 
-export type TExtractionConfig<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
+        proxy?: Proxies,
+        got?: Partial<TGotOptions>,
+
+        debug?: boolean,
+        outputDir?: string,
+
+        onError?: (
+            type: 'request' | 'extraction' | 'processing', 
+            error: Error, 
+            options: TOptions,
+            scraperOptions: TScraperOptions<{}>
+        ) => void
+    }
+)
+
+export type TScraperOptions<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
     items?: ($: TFinder) => Cheerio<Element>,
     extract: (
         TDataList<TExtractedData>
@@ -30,15 +47,8 @@ export type TExtractionConfig<TExtractedData extends TDonnees, TProcessedData ex
     ),
     process?: (data: TExtractedData, index: number) => Promise<TProcessedData | false>,
     required?: string/*(keyof Partial<TExtractedData>)*/[],
-    gotOptions?: Partial<TGotOptions>
 }
 
-export type TScraperConfig<TExtractedData extends TDonnees, TProcessedData extends TDonnees> = (
-    ({ url: string } | { html: string })
-    &
-    TExtractionConfig<TExtractedData, TProcessedData>
-    &
-    {
-        proxy?: Proxies
-    }
-)
+type TDataList<TExtractedData extends TDonnees> = {
+    [name in keyof TExtractedData]: /* Extraction */TScraperOptions<TExtractedData> | /* Raw data */ any
+}

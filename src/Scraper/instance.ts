@@ -8,56 +8,56 @@ import got from 'got';
 import cheerio, { CheerioAPI, Cheerio, Element } from 'cheerio';
 
 // Libs
-import { jsonldreader, parseFromHTML } from '../utils';
-
-/*----------------------------------
-- CONFIG
-----------------------------------*/
-
-// TODO: Configure from Scraper instanciation
-const debugDir = 'crawlers/debug';
-const debug = true;
+import { parseFromHTML } from '../utils';
+import jsonld from '../utils/jsonld';
 
 /*----------------------------------
 - TYPE
 ----------------------------------*/
 
-import type { TDonnees, TScraperConfig, TExtractionConfig } from './types';
+import type { TDonnees, TOptions, TScraperOptions } from './types';
 
 /*----------------------------------
 - METHODES
 ----------------------------------*/
 export default class Scraper {
 
-    public constructor(
-        private id: string
-    ) {
+    public static defaultOptions: Partial<TOptions> = {};
+    
+    private options: TOptions;
 
+    public constructor( options: TOptions ) {
+        this.options = { ...Scraper.defaultOptions, ...options };
     }
 
+    private log = (...args: any[]) => this.options.debug &&
+        console.log(`[scraper][${this.options.id}]`, ...args); 
+
+    private warn = (...args: any[]) => //this.options.debug &&
+        console.warn(`[scraper][${this.options.id}]`, ...args); 
+
     public async scrape<TExtractedData extends TDonnees, TProcessedData extends TDonnees>( 
-        crawler: TScraperConfig<TExtractedData, TProcessedData>,
+        config: TScraperOptions<TExtractedData, TProcessedData>,
     ): Promise<TProcessedData[]> {
 
         let html: string | undefined;
 
-        if ('url' in crawler) {
-
-            let url = crawler.url;
-            if (crawler.proxy !== undefined) {
-                const proxy = await crawler.proxy.get();
+        if ('url' in this.options) {
+            let url = this.options.url;
+            if (this.options.proxy !== undefined) {
+                const proxy = await this.options.proxy.get();
                 url = proxy.prefix + url;
             }
 
-            debug && console.log(`[scraper] Requete vers ${url}`);
+            this.log(`Requete vers ${url}`);
 
             try {
                 html = await got(url, {
 
                     // Prend en compte les probabilités d'échec des proxies
-                    retry: crawler.proxy !== undefined ? 5 : 0,
+                    retry: this.options.proxy !== undefined ? 5 : 0,
 
-                    ...(crawler.gotOptions || {}),
+                    ...(this.options.got || {}),
 
                     responseType: 'text',
 
@@ -70,64 +70,64 @@ export default class Scraper {
                 })
             } catch (e) {
 
-                console.error(`[scraper][${this.id}] Erreur lors du crawling de ${url}`, e);
-                throw e;
+                if (this.options.onError)
+                    this.options.onError('request', e, this.options, config);
+                else
+                    throw e;
                 
             }
 
-            if (html && debug) {
-                const fichierLocal = debugDir + '/' + this.id + '.html';
+            if (html && this.options.outputDir) {
+                const fichierLocal = this.options.outputDir + '/' + this.options.id + '.html';
                 fs.outputFileSync(fichierLocal, html);
             }
 
         } else {
 
-            html = crawler.html;
+            html = this.options.html;
 
         }
 
         // Extraction code html
         if (html === undefined)
-            return;
+            return [];
 
         // Interprétation du dom
         const $ = cheerio.load(html);
         const element = $('html');
 
         // Extraction de items
-        const results = await this.extractItems(crawler, $, element);
+        const results = await this.extractItems(config, $, element);
 
-        debug && console.log(`[scraper] Terminé.`);
+        this.log(`Terminé.`);
 
         return results;
 
     }
 
     private async extractItems<TExtractedData extends TDonnees>(
-        crawler: TExtractionConfig<TExtractedData>,
+        config: TScraperOptions<TExtractedData>,
         $: CheerioAPI,
         elements: Cheerio<Element>
     ) {
 
-        const debug = true;
-
-        // Si crawler.items = undefined, extractData directement
-        if (crawler.items === undefined) 
+        // Si config.items = undefined, extractData directement
+        if (config.items === undefined) 
             return [
-                await this.extractData(crawler, $, elements, 0)
+                await this.extractData(config, $, elements, 0)
             ];
 
         const finder = (selector: string) => elements.find(selector)
-        const itemsList = crawler.items( finder ).toArray();
+        const itemsList = config.items( finder ).toArray();
 
-        debug && console.log(`[scraper][${this.id}] ${itemsList.length} Items trouvés`);
-        if (itemsList.length === 0 && debug) {
+        this.log(`[${this.options.id}] ${itemsList.length} Items trouvés`);
+        if (itemsList.length === 0 && this.options.debug) {
 
-            const fichierLocal = debugDir + '/' + this.id + '.html';
+            const fichierLocal = this.options.outputDir + '/' + this.options.id + '.html';
             fs.outputFileSync(fichierLocal, $.root().html());
 
             // Pas normal
-            console.warn(`Aucun résultat trouvé. html enregistré dans ${fichierLocal}`);
+            this.warn(`Aucun résultat trouvé. html enregistré dans ${fichierLocal}`);
 
         }
 
@@ -135,12 +135,12 @@ export default class Scraper {
 
         await Promise.all( 
             itemsList.map((item, index) => 
-                this.extractData(crawler, $, $(item), index).then((itemData) => {
+                this.extractData(config, $, $(item), index).then((itemData) => {
                     if (itemData) {
 
                         items.push(itemData);
                         
-                        debug && console.log(`[scraper][${this.id}] Crawled data`, itemData)
+                        this.log(`[${this.options.id}] Crawled data`, itemData)
 
                     }
                 })
@@ -154,18 +154,18 @@ export default class Scraper {
     // 0 = exclusion de l'item
     // -1 = Arrêt de l'itération des résultats
     private async extractData<TExtractedData extends TDonnees>(
-        crawler: TExtractionConfig<TExtractedData>,
+        config: TScraperOptions<TExtractedData>,
         $: CheerioAPI,
         element: Cheerio<Element>,
         index: number
     ): Promise<TDonnees | false> {
 
         const finder = (selector: string) => element.find(selector);
-        const $jsonld = jsonldreader($);
+        const $jsonld = jsonld($/*, this.options.debug*/);
 
-        const itemData = typeof crawler.extract === 'function'
-            ? crawler.extract(finder, $jsonld, element)
-            : crawler.extract;
+        const itemData = typeof config.extract === 'function'
+            ? config.extract(finder, $jsonld, element)
+            : config.extract;
             
         for (const dataname in itemData) {
 
@@ -178,12 +178,14 @@ export default class Scraper {
 
                 } catch (error) {
 
-                    console.warn(`[scraper][extractData] Erreur lors de l'extraction de ${dataname}:`, error);
-
+                    this.warn(`[extractData] Erreur lors de l'extraction de ${dataname}:`, error);
                     value = null;
+
+                    if (this.options.onError)
+                        this.options.onError('extraction', error, this.options, config);
                 }
                     
-            } else {
+            } else if (typeof value === 'string') {
 
                 value = parseFromHTML(value);
                 
@@ -192,8 +194,8 @@ export default class Scraper {
             // Echec de l'extraction
             if (value === undefined || value === null || value === '') {
 
-                const exclude = crawler.required !== undefined && crawler.required.includes(dataname);
-                console.warn(`[scraper][extractData] Echec de l'extraction de ` + dataname, exclude ? "Exclusion de l'item" : '');
+                const exclude = config.required !== undefined && config.required.includes(dataname);
+                this.warn(`[extractData] Echec de l'extraction de ` + dataname, exclude ? "Exclusion de l'item" : '');
                 if (exclude)
                     return false;
 
@@ -206,23 +208,27 @@ export default class Scraper {
 
         }
 
-        debug && console.log('[scraper][extractData]', this.id, 'Données brutes extraites:', itemData);
+        this.log('[extractData]', this.options.id, 'Données brutes extraites:', itemData);
 
-        if (crawler.process !== undefined) {
+        if (config.process !== undefined) {
 
             try {
 
-                const processResult = await crawler.process(itemData, index);
+                const processResult = await config.process(itemData, index);
                 if (processResult === false)
                     return false;
 
-                debug && console.log('[scraper][extractData]', this.id, 'Données après traitement:', processResult);
+                this.log('[extractData]', this.options.id, 'Données après traitement:', processResult);
 
                 return processResult;
                 
             } catch (error) {
 
-                debug && console.warn('[scraper][extractData]', this.id, "Erreur lors du traitement des données", error);
+                this.warn('[extractData]', this.options.id, "Erreur lors du traitement des données", error);
+
+                if (this.options.onError)
+                    this.options.onError('processing', error, this.options, config);
+
                 return false;
                 
             }

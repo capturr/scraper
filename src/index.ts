@@ -1,19 +1,24 @@
 import Scraper from './Scraper/instance';
 import ProxyManager from './ProxyManager'
 
-import { TDonnees, TScraperConfig, TExtractionConfig } from './Scraper/types';
+import { TDonnees, TOptions, TScraperOptions } from './Scraper/types';
 
-export const scrape = <TExtractedData extends TDonnees, TProcessedData extends TDonnees>(
-    id: string,
-    config: TScraperConfig<TExtractedData, TProcessedData>
-) => new Scraper(id).scrape(config);
+const scrape = <TExtractedData extends TDonnees, TProcessedData extends TDonnees>(
 
-export const subset = <TExtractedData extends TDonnees>(
-    options: TExtractionConfig<TExtractedData>
+    options: TOptions,
+    scraper: TScraperOptions<TExtractedData, TProcessedData>
+
+) => new Scraper(options).scrape(scraper);
+
+const subset = <TExtractedData extends TDonnees>(
+    options: TScraperOptions<TExtractedData>
 ) => ({
     _subset: true,
     ...options
 })
 
-export default { scrape, subset, Proxies: ProxyManager }
+const setDefaultOptions = (options: Partial<TOptions>) => 
+    Scraper.defaultOptions = { ...Scraper.defaultOptions, ...options }
+
+export default { scrape, subset, setDefaultOptions, Proxies: ProxyManager }
 export { ProxyManager as ScraperProxies }

@@ -4,22 +4,17 @@
 
 // Npm
 import { CheerioAPI } from 'cheerio';
-import { decode } from 'html-entities';
-import condenseWhitespace from 'condense-whitespace';
 
 /*----------------------------------
 - TYPES
 ----------------------------------*/
 
+export type TJsonldReader = (path: any) => any
 
 /*----------------------------------
 - METHODES
 ----------------------------------*/
-// Extraction des définitions json-ld
-export type TJsonldReader = ReturnType<typeof jsonldreader>
-export const jsonldreader = ($: CheerioAPI) => {
-
-    const debug = false;
+export default ($: CheerioAPI, debug: boolean = false): TJsonldReader => {
 
     let definitions: any[] = [];
     const rawDefinitions = $('script[type="application/ld+json"]');
@@ -79,8 +74,4 @@ export const jsonldreader = ($: CheerioAPI) => {
         // Pas trouvé, retourne undefined
         return undefined;
     }
-}
-
-export function parseFromHTML(val: string): string {
-    return condenseWhitespace( decode(val) );
 }
