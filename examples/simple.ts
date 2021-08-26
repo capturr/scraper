@@ -17,7 +17,7 @@ const proxyRotator = undefined;/*new Scraper.Proxies({
 });*/
 
 // Scrape Cryptocurrencies list
-Scraper.scrape('google.search', {
+Scraper.scrape('cryptocurrencies', {
     url: 'https://coinmarketcap.com/',
     proxy: proxyRotator,
     items: $ => $('table.cmc-table > tbody > tr'),
@@ -31,14 +31,13 @@ Scraper.scrape('google.search', {
 
     }),
     required: ['name', 'price'],
-    // @ts-ignore
     process: async ({ logo, name, price }) => ({
 
         logo,
 
         name: name.trim(),
 
-        price: parseFloat(price.trim())
+        price: parseFloat( price.trim().replace(/[^\d\.]/g, '') )
 
     }),
 }).then((result) => {

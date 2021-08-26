@@ -21,24 +21,20 @@ type TDataList<TExtractedData extends TDonnees> = {
     [name in keyof TExtractedData]: /* Extraction */TExtractionConfig<TExtractedData> | /* Raw data */ any
 }
 
-type TDataExtractors<TExtractedData extends TDonnees> = (
-    TDataList<TExtractedData>
-    |
-    (($: TFinder, $jsonld: TJsonldReader, element: Cheerio<Element>) => TDataList<TExtractedData>)
-)
-
 export type TExtractionConfig<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
     items?: ($: TFinder) => Cheerio<Element>,
-    extract: TDataExtractors<TExtractedData>,
+    extract: (
+        TDataList<TExtractedData>
+        |
+        (($: TFinder, $jsonld: TJsonldReader, element: Cheerio<Element>) => TDataList<TExtractedData>)
+    ),
     process?: (data: TExtractedData, index: number) => Promise<TProcessedData | false>,
-    required?: (keyof Partial<TExtractedData>)[],
+    required?: string/*(keyof Partial<TExtractedData>)*/[],
     gotOptions?: Partial<TGotOptions>
 }
 
-type TScrapingSource = { url: string } | { html: string }
-
 export type TScraperConfig<TExtractedData extends TDonnees, TProcessedData extends TDonnees> = (
-    TScrapingSource
+    ({ url: string } | { html: string })
     &
     TExtractionConfig<TExtractedData, TProcessedData>
     &
