@@ -2,16 +2,14 @@
     "name": "@dopamyn/scraper",
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
     "description": "Simple & Human-Friendly HTML Scraper with Proxy Rotator",
-   	"keywords": [],
+    "keywords": [],
     "version": "0.0.3",
     "license": "MIT",
-    
     "private": false,
-    "main": "src/index.ts",
-	"files": [
-		"bin"
-	],
-	
+    "main": "bin/index.js",
+    "files": [
+        "bin"
+    ],
     "repository": {
         "type": "git",
         "url": "git://github.com/dopamyn/scraper.git"
@@ -19,13 +17,11 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
-        
         "example.simple": "ts-node examples/simple.ts",
-        
         "prepare": "npm run build"
     },
     "dependencies": {
-        "@dopamyn/jsonld-extract": "^0.0.2",
+        "@dopamyn/jsonld-extract": "^0.0.3",
         "cheerio": "^1.0.0-rc.10",
         "condense-whitespace": "^2.0.0",
         "fs-extra": "^10.0.0",
