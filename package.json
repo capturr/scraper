@@ -5,7 +5,9 @@
     "description": "Simple & Human Friendly HTML Scraper with Proxy Rotator",
     "main": "src/index.ts",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "example": "ts-node examples/crypto.ts"
     },
     "author": "Gaetan Le Gac",
     "license": "MIT",
@@ -15,7 +17,7 @@
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.10",
-        "condense-whitespace": "^3.0.0",
+        "condense-whitespace": "^2.0.0",
         "fs-extra": "^10.0.0",
         "got": "^11.8.2",
         "html-entities": "^2.3.2"

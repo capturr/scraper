@@ -5,7 +5,7 @@
 // Npm
 import fs from 'fs-extra';
 import got from 'got';
-import cheerio, { CheerioAPI, Cheerio, Element, Document, Node } from 'cheerio';
+import cheerio, { CheerioAPI, Cheerio, Element } from 'cheerio';
 
 // Libs
 import { jsonldreader, parseFromHTML } from '../utils';
@@ -49,7 +49,7 @@ export default class Scraper {
                 url = proxy.prefix + url;
             }
 
-            console.log(`[scraper] Requete vers ${url}`);
+            debug && console.log(`[scraper] Requete vers ${url}`);
 
             try {
                 html = await got(url, {
@@ -97,7 +97,7 @@ export default class Scraper {
         // Extraction de items
         const results = await this.extractItems(crawler, $, element);
 
-        console.log(`[scraper] Terminé.`);
+        debug && console.log(`[scraper] Terminé.`);
 
         return results;
 

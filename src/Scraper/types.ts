@@ -43,6 +43,6 @@ export type TScraperConfig<TExtractedData extends TDonnees, TProcessedData exten
     TExtractionConfig<TExtractedData, TProcessedData>
     &
     {
-        proxy?: Proxies<{}>
+        proxy?: Proxies
     }
 )

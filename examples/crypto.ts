@@ -1,31 +1,20 @@
-# Dopamyn Scraper
-
-## Documentation
-
-Soon
-
-## Usage Example
-
-```typescript
-
-// Import packages
-import Scraper from '@dopamyn/scraper';
-import got from 'got';
+// Import package
+import Scraper from '../src';
 
 // Configure proxy to bypass captcha & other anti-bot verification
-const proxyRotator = new Scraper.Proxies({
+const proxyRotator = undefined;/*new Scraper.Proxies({
 
     scraperapi: {
         prefix: 'http://api.scraperapi.com/?api_key=<apikey>&url=',
         getRemaining: () => got('http://api.scraperapi.com/account?api_key=<apikey>', {
             responseType: 'json'
         }).then(res => {
-            console.log(`[proxy][getRemaining] scraperapi`, res.body);
+            debug && console.log(`[proxy][getRemaining] scraperapi`, res.body);
             return res.body['requestLimit'] - res.body['requestCount'];
         })
     },
 
-});
+});*/
 
 // Scrape Cryptocurrencies list
 Scraper.scrape('google.search', {
@@ -42,16 +31,16 @@ Scraper.scrape('google.search', {
 
     }),
     required: ['name', 'price'],
+    // @ts-ignore
     process: async ({ logo, name, price }) => ({
 
         logo,
 
         name: name.trim(),
 
-        price: parseFloat( price.trim() )
+        price: parseFloat(price.trim())
 
     }),
-
 }).then((result) => {
 
     // Print result
@@ -59,19 +48,18 @@ Scraper.scrape('google.search', {
 
     /*
         Prints the following array:
-
+    
         [{
             logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
             name: "Bitcoin",
             price: 47669.92
-
+    
         }, {
             logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
             name: "Ethereum",
             price: 3139.49
-
+    
         }, ...]
     */
 
 })
-```

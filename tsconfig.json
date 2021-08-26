@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "rootDir": "./src",
+        "skipLibCheck": true,
+        "allowJs": true,
+
+        "downlevelIteration": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

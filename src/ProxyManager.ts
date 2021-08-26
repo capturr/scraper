@@ -21,17 +21,17 @@ const debug = true;
 /*----------------------------------
 - DEPENDANCES
 ----------------------------------*/
-export default class ProxyRotator<TProxyList extends { [id: string]: TProxy } = {}> {
+export default class ProxyRotator {
 
-    private curproxy: keyof TProxyList | undefined;
+    private curproxy: TProxy | undefined;
 
     public constructor(
-        private proxies: TProxyList
+        private proxies: { [id: string]: TProxy }
     ) {
 
     }
 
-    private async changeProxy(): Promise<keyof TProxyList> {
+    private async changeProxy(): Promise<TProxy> {
 
         // Recherche un proxy où il reste des crédits de requete
         for (const id in this.proxies) {
@@ -41,7 +41,7 @@ export default class ProxyRotator<TProxyList extends { [id: string]: TProxy } = 
                 proxy.remaining = await proxy.getRemaining();
 
             if (proxy.remaining > 0)
-                return id;
+                return proxy;
         }
 
         throw new Error(`Plus aucun proxy disponible.`);
@@ -50,14 +50,14 @@ export default class ProxyRotator<TProxyList extends { [id: string]: TProxy } = 
 
     public async get(): Promise<TProxy> {
 
-        if (this.curproxy === undefined || this.proxies[ this.curproxy ].remaining === 0)
+        if (this.curproxy === undefined || this.curproxy.remaining === 0)
              this.curproxy = await this.changeProxy();
 
-        debug && console.log(`[proxy]`,  this.curproxy , this.proxies[ this.curproxy ].remaining);
+        debug && console.log(`[proxy]`,  this.curproxy , this.curproxy.remaining);
 
-        this.proxies[ this.curproxy ].remaining--;
+        this.curproxy.remaining--;
 
-        return this.proxies[ this.curproxy ];
+        return this.curproxy;
 
     }
 
