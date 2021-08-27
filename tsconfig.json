@@ -5,7 +5,7 @@
         "outDir": "./bin",
         "skipLibCheck": true,
         "allowJs": true,
-
+        "declaration": true,
         "downlevelIteration": true
     },
     "include": [
