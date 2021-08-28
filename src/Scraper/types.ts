@@ -25,7 +25,7 @@ export type TOptions = (
         id: string,
 
         proxy?: Proxies,
-        got?: Partial<TGotOptions>,
+        request?: (url: string, options: TOptions) => Promise<string>,
 
         debug?: boolean,
         outputDir?: string,
@@ -34,12 +34,12 @@ export type TOptions = (
             type: 'request' | 'extraction' | 'processing', 
             error: Error, 
             options: TOptions,
-            scraperOptions: TScraperOptions<{}>
+            scraperOptions: TScraperActions<{}>
         ) => void
     }
 )
 
-export type TScraperOptions<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
+export type TScraperActions<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
     items?: ($: TFinder) => Cheerio<Element>,
     extract: (
         TDataList<TExtractedData>
@@ -51,5 +51,5 @@ export type TScraperOptions<TExtractedData extends TDonnees, TProcessedData exte
 }
 
 type TDataList<TExtractedData extends TDonnees> = {
-    [name in keyof TExtractedData]: /* Extraction */TScraperOptions<TExtractedData> | /* Raw data */ any
+    [name in keyof TExtractedData]: /* Extraction */TScraperActions<TExtractedData> | /* Raw data */ any
 }

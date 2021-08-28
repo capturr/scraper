@@ -16,14 +16,29 @@ import { parseFromHTML } from '../utils';
 - TYPE
 ----------------------------------*/
 
-import type { TDonnees, TOptions, TScraperOptions } from './types';
+import type { TDonnees, TOptions, TScraperActions } from './types';
+
+const defaultRequest = ( url: string, options: TOptions ) => got(url, {
+
+    // Prend en compte les probabilités d'échec des proxies
+    retry: options.proxy !== undefined ? 5 : 0,
+
+    responseType: 'text',
+
+    isStream: false,
+    resolveBodyOnly: true
+
+    // Déconseillé avec proxy, car temps de réponse assez long
+    //timeout: 5000
+
+})
 
 /*----------------------------------
 - METHODES
 ----------------------------------*/
 export default class Scraper {
 
-    public static defaultOptions: Partial<TOptions> = {};
+    public static defaultOptions = {};
     
     private options: TOptions;
 
@@ -38,7 +53,7 @@ export default class Scraper {
         console.warn(`[scraper][${this.options.id}]`, ...args); 
 
     public async scrape<TExtractedData extends TDonnees, TProcessedData extends TDonnees>( 
-        config: TScraperOptions<TExtractedData, TProcessedData>,
+        config: TScraperActions<TExtractedData, TProcessedData>,
     ): Promise<TProcessedData[]> {
 
         let html: string | undefined;
@@ -51,24 +66,10 @@ export default class Scraper {
             }
 
             this.log(`Requete vers ${url}`);
+            const requestAdapter = this.options.request || defaultRequest;
 
             try {
-                html = await got(url, {
-
-                    // Prend en compte les probabilités d'échec des proxies
-                    retry: this.options.proxy !== undefined ? 5 : 0,
-
-                    ...(this.options.got || {}),
-
-                    responseType: 'text',
-
-                    isStream: false,
-                    resolveBodyOnly: true
-
-                    // Déconseillé avec proxy, car temps de réponse assez long
-                    //timeout: 5000
-
-                })
+                html = await requestAdapter(url, this.options);
             } catch (e) {
 
                 if (this.options.onError)
@@ -107,7 +108,7 @@ export default class Scraper {
     }
 
     private async extractItems<TExtractedData extends TDonnees>(
-        config: TScraperOptions<TExtractedData>,
+        config: TScraperActions<TExtractedData>,
         $: CheerioAPI,
         elements: Cheerio<Element>
     ) {
@@ -122,7 +123,7 @@ export default class Scraper {
         const itemsList = config.items( finder ).toArray();
 
         this.log(`[${this.options.id}] ${itemsList.length} Items trouvés`);
-        if (itemsList.length === 0 && this.options.debug) {
+        if (itemsList.length === 0 && this.options.outputDir) {
 
             const fichierLocal = this.options.outputDir + '/' + this.options.id + '.html';
             fs.outputFileSync(fichierLocal, $.root().html());
@@ -155,7 +156,7 @@ export default class Scraper {
     // 0 = exclusion de l'item
     // -1 = Arrêt de l'itération des résultats
     private async extractData<TExtractedData extends TDonnees>(
-        config: TScraperOptions<TExtractedData>,
+        config: TScraperActions<TExtractedData>,
         $: CheerioAPI,
         element: Cheerio<Element>,
         index: number

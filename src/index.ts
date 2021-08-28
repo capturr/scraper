@@ -9,18 +9,18 @@ import ProxyManager from './ProxyManager'
 - TYPES
 ----------------------------------*/
 
-import { TDonnees, TOptions, TScraperOptions } from './Scraper/types';
+import { TDonnees, TOptions, TScraperActions } from './Scraper/types';
 
 /*----------------------------------
 - METHODES
 ----------------------------------*/
 const scrape = <TExtractedData extends TDonnees, TProcessedData extends TDonnees>(
     options: TOptions,
-    scraper: TScraperOptions<TExtractedData, TProcessedData>
+    scraper: TScraperActions<TExtractedData, TProcessedData>
 ) => new Scraper(options).scrape(scraper);
 
 const subset = <TExtractedData extends TDonnees>(
-    options: TScraperOptions<TExtractedData>
+    options: TScraperActions<TExtractedData>
 ) => ({
     _subset: true,
     ...options
@@ -31,3 +31,5 @@ const setDefaultOptions = (options: Partial<TOptions>) =>
 
 export default { scrape, subset, setDefaultOptions, Proxies: ProxyManager }
 export { ProxyManager as ScraperProxies }
+
+export type TScraperOptions = TOptions
