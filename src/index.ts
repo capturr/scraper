@@ -10,7 +10,7 @@ import ProxyManager from './ProxyManager'
 ----------------------------------*/
 
 import {
-    TDonnees, 
+    TDonnees, HttpMethod,
     TOptions, TRequestOptions, TOptionsWithRequest, TOptionsWithHtml,
     TScraperActions 
 } from './Scraper/types';
@@ -40,3 +40,4 @@ export type TScraperOptions = TOptions
 export type TScraperRequestOptions = TRequestOptions
 export type TScraperOptionsWithRequest = TOptionsWithRequest
 export type TScraperOptionsWithHtml = TOptionsWithHtml
+export type THttpMethod = HttpMethod
