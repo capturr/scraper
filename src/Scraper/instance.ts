@@ -75,7 +75,11 @@ export default class Scraper {
             const requestAdapter = this.options.request || defaultRequest;
 
             try {
-                html = await requestAdapter({ ...this.options, url });
+                html = await requestAdapter({ 
+                    ...this.options, 
+                    url,
+                    method: this.options.method || 'GET'
+                });
             } catch (e) {
 
                 if (this.options.onError)

@@ -3,7 +3,7 @@
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
     "description": "Simple & Human-Friendly HTML Scraper with Proxy Rotator",
     "keywords": [],
-    "version": "0.0.7-3",
+    "version": "0.0.7-4",
     "license": "MIT",
     "private": false,
     "main": "bin/index.js",
