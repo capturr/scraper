@@ -21,7 +21,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "@dopamyn/jsonld-extract": "^0.0.5",
+        "@dopamyn/jsonld-extract": "^0.0.8",
         "cheerio": "^1.0.0-rc.10",
         "condense-whitespace": "^2.0.0",
         "fs-extra": "^10.0.0",
