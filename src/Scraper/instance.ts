@@ -16,12 +16,17 @@ import { parseFromHTML } from '../utils';
 - TYPE
 ----------------------------------*/
 
-import type { TDonnees, TOptions, TScraperActions } from './types';
+import type { TDonnees, TOptions, TOptionsWithRequest, TScraperActions } from './types';
 
-const defaultRequest = ( url: string, options: TOptions ) => got(url, {
+const defaultRequest = ({ url, method, body, headers, proxy }: TOptionsWithRequest ) => got({
+
+    url: url,
+    method: method,
+    body: body, // Form data
+    headers: headers,
 
     // Prend en compte les probabilités d'échec des proxies
-    retry: options.proxy !== undefined ? 5 : 0,
+    retry: proxy !== undefined ? 5 : 0,
 
     responseType: 'text',
 
@@ -59,6 +64,7 @@ export default class Scraper {
         let html: string | undefined;
 
         if ('url' in this.options) {
+
             let url = this.options.url;
             if (this.options.proxy !== undefined) {
                 const proxy = await this.options.proxy.get();
@@ -69,7 +75,7 @@ export default class Scraper {
             const requestAdapter = this.options.request || defaultRequest;
 
             try {
-                html = await requestAdapter(url, this.options);
+                html = await requestAdapter({ ...this.options, url });
             } catch (e) {
 
                 if (this.options.onError)

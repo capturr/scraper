@@ -9,7 +9,11 @@ import ProxyManager from './ProxyManager'
 - TYPES
 ----------------------------------*/
 
-import { TDonnees, TOptions, TScraperActions } from './Scraper/types';
+import {
+    TDonnees, 
+    TOptions, TOptionsWithRequest, TOptionsWithHtml,
+    TScraperActions 
+} from './Scraper/types';
 
 /*----------------------------------
 - METHODES
@@ -33,3 +37,5 @@ export default { scrape, subset, setDefaultOptions, Proxies: ProxyManager }
 export { ProxyManager as ScraperProxies }
 
 export type TScraperOptions = TOptions
+export type TScraperOptionsWithRequest = TOptionsWithRequest
+export type TScraperOptionsWithHtml = TOptionsWithHtml

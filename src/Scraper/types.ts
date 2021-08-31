@@ -12,32 +12,12 @@ import type { TJsonldReader } from '@dopamyn/jsonld-extract';
 import type Proxies from '../ProxyManager';
 
 /*----------------------------------
-- TYPES
+- GENERAL
 ----------------------------------*/
+
 export type TDonnees = { [cle: string]: any }
 
 type TFinder = (selector: string) => Cheerio<Element>
-
-export type TOptions = (
-    ({ url: string } | { html: string })
-    &
-    {
-        id: string,
-
-        proxy?: Proxies,
-        request?: (url: string, options: TOptions) => Promise<string>,
-
-        debug?: boolean,
-        outputDir?: string,
-
-        onError?: (
-            type: 'request' | 'extraction' | 'processing', 
-            error: Error, 
-            options: TOptions,
-            scraperOptions: TScraperActions<{}>
-        ) => void
-    }
-)
 
 export type TScraperActions<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
     items?: ($: TFinder) => Cheerio<Element>,
@@ -53,3 +33,57 @@ export type TScraperActions<TExtractedData extends TDonnees, TProcessedData exte
 type TDataList<TExtractedData extends TDonnees> = {
     [name in keyof TExtractedData]: /* Extraction */TScraperActions<TExtractedData> | /* Raw data */ any
 }
+
+/*----------------------------------
+- OPTIONS
+----------------------------------*/
+
+type TBaseOptions = {
+    id: string,
+
+    debug?: boolean,
+    outputDir?: string,
+
+    onError?: (
+        type: 'request' | 'extraction' | 'processing',
+        error: Error,
+        options: TOptions,
+        scraperOptions: TScraperActions<{}>
+    ) => void
+}
+
+export type TOptionsWithRequest = TBaseOptions & {
+
+    url: string,
+    method?: HttpMethod,
+    body?: string,
+    headers?: {[cle: string]: string},
+
+    proxy?: Proxies,
+    request?: (options: TOptionsWithRequest) => Promise<string>,
+}
+
+export type TOptionsWithHtml = TBaseOptions & {
+    html: string
+}
+
+export type TOptions = TOptionsWithRequest | TOptionsWithHtml;
+
+// https://github.com/sindresorhus/got/blob/main/source/core/options.ts#L247
+export type HttpMethod =
+    | 'GET'
+    | 'POST'
+    | 'PUT'
+    | 'PATCH'
+    | 'HEAD'
+    | 'DELETE'
+    | 'OPTIONS'
+    | 'TRACE'
+    | 'get'
+    | 'post'
+    | 'put'
+    | 'patch'
+    | 'head'
+    | 'delete'
+    | 'options'
+    | 'trace';
