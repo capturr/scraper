@@ -52,13 +52,14 @@ type TBaseOptions = {
     ) => void
 }
 
-export type TOptionsWithRequest = TBaseOptions & {
-
+export type TRequestOptions = {
     url: string,
     method?: HttpMethod,
     body?: string,
-    headers?: {[cle: string]: string},
+    headers?: { [cle: string]: string },
+}
 
+export type TOptionsWithRequest = TBaseOptions & TRequestOptions & {
     proxy?: Proxies,
     request?: (options: TOptionsWithRequest) => Promise<string>,
 }
