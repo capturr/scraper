@@ -7,7 +7,7 @@ import fs from 'fs-extra';
 import got from 'got';
 import cheerio, { CheerioAPI, Cheerio, Element } from 'cheerio';
 
-import jsonld from '@dopamyn/jsonld-extract';
+import jsonld from 'jsonld-extract';
 
 // Libs
 import { parseFromHTML } from '../utils';

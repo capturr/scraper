@@ -6,7 +6,7 @@
 import type { Cheerio, Element } from "cheerio"
 import type { Options as TGotOptions } from 'got';
 
-import type { TJsonldReader } from '@dopamyn/jsonld-extract';
+import type { TJsonldReader } from 'jsonld-extract';
 
 // Libs
 import type Proxies from '../ProxyManager';
