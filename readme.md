@@ -2,12 +2,12 @@
 
 Simple & Human-Friendly HTML Scraper with Proxy Rotator.
 
-[![npm](https://img.shields.io/npm/v/@dopamyn/scraper)](https://www.npmjs.com/package/@dopamyn/scraper)
+[![npm](https://img.shields.io/npm/v/declarative-scraper)](https://www.npmjs.com/package/declarative-scraper)
 
 ## Installation
 
 ```bash
-npm install --save @dopamyn/scraper
+npm install --save declarative-scraper
 ```
 
 ## Documentation

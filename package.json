@@ -1,9 +1,18 @@
 {
-    "name": "@dopamyn/scraper",
+    "name": "declarative-scraper",
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
     "description": "Simple & Human-Friendly HTML Scraper with Proxy Rotator",
-    "keywords": [],
-    "version": "0.0.7-4",
+    "keywords": [
+        "scraper",
+        "spider",
+        "crawler",
+        "web",
+        "html",
+        "extract",
+        "jsonld",
+        "data"
+    ],
+    "version": "0.0.8",
     "license": "MIT",
     "private": false,
     "main": "bin/index.js",
