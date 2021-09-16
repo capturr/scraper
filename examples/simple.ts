@@ -1,25 +1,13 @@
-// Import package
-import Scraper from '../src';
+// Import dependancies
+import Scraper, { gotAdapter } from '../src';
+import got from 'got';
 
-// Configure proxy to bypass captcha & other anti-bot verification
-const proxyRotator = undefined;/*new Scraper.Proxies({
+// Configure your scraper
+const scraper = new Scraper({
 
-    scraperapi: {
-        prefix: 'http://api.scraperapi.com/?api_key=<apikey>&url=',
-        getRemaining: () => got('http://api.scraperapi.com/account?api_key=<apikey>', {
-            responseType: 'json'
-        }).then(res => {
-            debug && console.log(`[proxy][getRemaining] scraperapi`, res.body);
-            return res.body['requestLimit'] - res.body['requestCount'];
-        })
-    },
-
-});*/
-
-// Set global configuration
-Scraper.setDefaultOptions({
+    request: gotAdapter(got),
     // Show debug infos 
-    debug: true,
+    debug: false,
     // Handle errors
     onError: (type, error, options, scraper) => {
 
@@ -31,24 +19,19 @@ Scraper.setDefaultOptions({
         );
 
     }
+
 });
 
 // Scrape Cryptocurrencies list
-Scraper.scrape({
+scraper.scrape({
 
-    // Identifier for debugging
-    id: 'cryptocurrencies',
-    // URL address to scrape
-    url: 'https://coinmarketcap.com/',
-    // Proxy Rotator instance (optional)
-    proxy: proxyRotator,
+    // 1. Basic options
+    id: 'cryptocurrencies', // Identifier for debugging
+    url: 'https://coinmarketcap.com/', // URL address to scrape
 
-}, {
-
-    // Items to iterate (optional)
-    items: $ => $('table.cmc-table > tbody > tr'),
-    // Data to extract for each item
-    extract: ($) => ({
+    // 2. Extraction
+    items: $ => $('table.cmc-table > tbody > tr'), // Items to iterate (optional)
+    extract: ($) => ({ // Data to extract for each item
 
         logo: $('> td:eq(2) img.coin-logo').attr('src'),
 
@@ -57,10 +40,10 @@ Scraper.scrape({
         price: $('> td:eq(3)').text()
 
     }),
-    // If name or price cannot be extracted, the item will be excluded from results
-    required: ['name', 'price'],
-    // Normalize / Format the extracted data (optional)
-    process: async ({ logo, name, price }) => ({
+
+    // 3. Processing
+    required: ['name', 'price'], // If name or price cannot be extracted, the item will be excluded from results
+    process: async ({ logo, name, price }) => ({ // Normalize / Format the extracted data (optional)
 
         logo,
 
@@ -78,17 +61,58 @@ Scraper.scrape({
     /*
         Prints the following array:
     
-        [{
-            logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-            name: "Bitcoin",
-            price: 47669.92
-    
-        }, {
-            logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
-            name: "Ethereum",
-            price: 3139.49
-    
-        }, ...]
+        [
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                name: 'Bitcoin',
+                price: 48415.71
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                name: 'Ethereum',
+                price: 3634.48
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png',
+                name: 'Cardano',
+                price: 2.49
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png',
+                name: 'Binance Coin',
+                price: 429.91
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                name: 'Tether',
+                price: 1
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png',
+                name: 'XRP',
+                price: 1.12
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
+                name: 'Solana',
+                price: 161.09
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+                name: 'Polkadot',
+                price: 35.9
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/74.png',
+                name: 'Dogecoin',
+                price: 0.2461
+            },
+            {
+                logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                name: 'USD Coin',
+                price: 1
+            }
+        ]
     */
 
 })

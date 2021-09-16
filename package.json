@@ -12,7 +12,7 @@
         "jsonld",
         "data"
     ],
-    "version": "0.0.8",
+    "version": "0.0.9",
     "license": "MIT",
     "private": false,
     "main": "bin/index.js",
@@ -26,18 +26,18 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
-        "example.simple": "ts-node examples/simple.ts",
+        "example:simple": "ts-node examples/simple.ts",
         "prepare": "npm run build"
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.10",
         "condense-whitespace": "^2.0.0",
         "fs-extra": "^10.0.0",
-        "got": "^11.8.2",
         "html-entities": "^2.3.2",
         "jsonld-extract": "^0.0.8"
     },
     "devDependencies": {
+        "got": "^11.8.2",
         "typescript": "^4.3.5"
     }
 }
