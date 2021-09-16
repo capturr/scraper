@@ -20,7 +20,7 @@ const scraper = new Scraper({
 
     },
 
-    proxy: new ProxyRotator({
+    /*proxy: new ProxyRotator({
 
         zenscrape: {
             prefix: 'https://app.zenscrape.com/api/v1/get?apikey=<key>>&url=',
@@ -41,7 +41,7 @@ const scraper = new Scraper({
                 return res.body['requestLimit'] - res.body['requestCount'];
             })
         },
-    })
+    })*/
 
 });
 

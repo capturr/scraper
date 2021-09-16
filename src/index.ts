@@ -77,7 +77,7 @@ export default class Scraper {
             if (extractor.request === undefined)
                 extractor.request = this.options.request;
             if (extractor.request === undefined)
-                throw new Error(`A proxy adapter must be specified in options in order to make url requests.`);
+                throw new Error(`A request adapter must be specified in options in order to make url requests.`);
 
             let url = extractor.url;
 
