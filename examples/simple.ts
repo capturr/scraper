@@ -1,5 +1,5 @@
 // Import dependancies
-import Scraper, { gotAdapter } from '../src';
+import Scraper, { gotAdapter, ProxyRotator } from '../src';
 import got from 'got';
 
 // Configure your scraper
@@ -18,7 +18,30 @@ const scraper = new Scraper({
             '|| scraper =', scraper
         );
 
-    }
+    },
+
+    proxy: new ProxyRotator({
+
+        zenscrape: {
+            prefix: 'https://app.zenscrape.com/api/v1/get?apikey=<key>>&url=',
+            getRemaining: () => got('https://app.zenscrape.com/api/v1/status?apikey=<key>>', {
+                responseType: 'json'
+            }).then(res => {
+                console.log(`[proxy][getRemaining] zenscrape`, res.body);
+                return res.body['remaining_requests'] as number;
+            })
+        },
+
+        scraperapi: {
+            prefix: 'http://api.scraperapi.com/?api_key=<key>>&url=',
+            getRemaining: () => got('http://api.scraperapi.com/account?api_key=<key>>', {
+                responseType: 'json'
+            }).then(res => {
+                console.log(`[proxy][getRemaining] scraperapi`, res.body);
+                return res.body['requestLimit'] - res.body['requestCount'];
+            })
+        },
+    })
 
 });
 
@@ -30,7 +53,7 @@ scraper.scrape({
     url: 'https://coinmarketcap.com/', // URL address to scrape
 
     // 2. Extraction
-    items: $ => $('table.cmc-table > tbody > tr'), // Items to iterate (optional)
+    items: $ => $('table.cmc-table > tbody > tr'), // Items to iterate
     extract: ($) => ({ // Data to extract for each item
 
         logo: $('> td:eq(2) img.coin-logo').attr('src'),
@@ -43,7 +66,7 @@ scraper.scrape({
 
     // 3. Processing
     required: ['name', 'price'], // If name or price cannot be extracted, the item will be excluded from results
-    process: async ({ logo, name, price }) => ({ // Normalize / Format the extracted data (optional)
+    process: async ({ logo, name, price }) => ({ // Normalize / Format the extracted data
 
         logo,
 

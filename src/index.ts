@@ -9,7 +9,7 @@ import jsonld from 'jsonld-extract';
 
 // Libs
 import { parseFromHTML } from './utils';
-export { default as ProxyManager } from './ProxyManager'
+export { default as ProxyRotator } from './ProxyRotator'
 
 /*----------------------------------
 - TYPE

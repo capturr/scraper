@@ -7,7 +7,7 @@ import type { Cheerio, Element } from "cheerio"
 import type { TJsonldReader } from 'jsonld-extract';
 
 // Libs
-import type Proxies from './ProxyManager';
+import type Proxies from './ProxyRotator';
 
 /*----------------------------------
 - GENERAL
