@@ -7,7 +7,7 @@ const scraper = new Scraper({
 
     request: gotAdapter(got),
     // Show debug infos 
-    debug: false,
+    debug: true,
     // Handle errors
     onError: (type, error, options, scraper) => {
 

@@ -55,6 +55,14 @@ export default class Scraper {
         
     }
 
+    public static async scrape<TExtractedData extends TDonnees, TProcessedData extends TDonnees>(
+        extractor: TExtractor<TExtractedData, TProcessedData>,
+    ): Promise<TProcessedData[]> {
+
+        return await (new Scraper({})).scrape(extractor);
+
+    }
+
     public async scrape<TExtractedData extends TDonnees, TProcessedData extends TDonnees>( 
         extractor: TExtractor<TExtractedData, TProcessedData>,
     ): Promise<TProcessedData[]> {
