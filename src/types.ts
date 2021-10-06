@@ -19,6 +19,12 @@ export type TDonnees = { [cle: string]: any }
 
 export type Got = (opts: any) => Promise<any>;
 
+export const Action = {
+    EXCLUDE: Symbol.for('EXCLUDE'),
+    IGNORE: Symbol.for('IGNORE'),
+    ERROR: Symbol.for('ERROR'),
+}
+
 /*----------------------------------
 - INSTANCE OPTIONS
 ----------------------------------*/
@@ -27,6 +33,7 @@ export type TInstanceOptions = {
 
     debug?: boolean,
     outputDir?: string,
+    onItemError?: typeof Action[keyof typeof Action]
 
     // For request extractors
     proxy?: Proxies,

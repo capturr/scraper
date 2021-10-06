@@ -15,10 +15,13 @@ export { default as ProxyRotator } from './ProxyRotator'
 - TYPE
 ----------------------------------*/
 
-import type { 
+import { 
+    Action,
     TDonnees, Got,
     TInstanceOptions, TExtractor, TRequestExtractor
-} from './index.d';
+} from './types';
+
+export { Action } from './types';
 
 /*----------------------------------
 - HELPERS
@@ -87,8 +90,6 @@ export class ScrapingError extends Error implements TScrapingContext {
 - METHODES
 ----------------------------------*/
 export default class Scraper {
-
-    public static EXCLUDE_ITEM = Symbol.for('EXCLUDE_ITEM');
     
     public constructor( private options: TInstanceOptions ) {
         
@@ -146,8 +147,9 @@ export default class Scraper {
             });
 
             if (html && this.options.outputDir) {
-                const fichierLocal = this.options.outputDir + '/' + extractor.id + '.html';
-                fs.outputFileSync(fichierLocal, html);
+                const logFile = this.options.outputDir + '/' + extractor.id + '.html';
+                fs.outputFileSync(logFile, html);
+                extractor.debug && console.info(`[${extractor.id}] Saved output in ${logFile}`);
             }
 
         } else {
@@ -156,19 +158,16 @@ export default class Scraper {
 
         }
 
-        // Extraction code html
         if (html === undefined)
             return [];
 
-        // Interprétation du dom
+        // Parsing DOM
         const $ = cheerio.load(html);
         const element = $('html');
 
         // Extraction de items
         const results = await this.extractItems(extractor, $, element);
-
-        extractor.debug && console.log(`[${extractor.id}] Finished.`);
-
+        extractor.debug && console.log(`[${extractor.id}] Finished with ${results.length} results`);
         return results;
 
     }
@@ -179,37 +178,43 @@ export default class Scraper {
         elements: Cheerio<Element>
     ) {
 
-        // Si extractor.items = undefined, extractData directement
+        // Only one item
         if (extractor.items === undefined) 
             return [
                 await this.extractData(extractor, $, elements, 0)
             ];
 
+        // Extract the list of items
         const finder = (selector: string) => elements.find(selector)
         const itemsList = extractor.items( finder ).toArray();
-
         extractor.debug && console.log(`[${extractor.id}] ${itemsList.length} Items were found`);
-        
-        // Log file
-        if (this.options.outputDir) {
-
-            const logFile = this.options.outputDir + '/' + extractor.id + '.html';
-            fs.outputFileSync(logFile, $.root().html());
-            extractor.debug && console.info(`[${extractor.id}] Saved output in ${logFile}`);
-
-        }
 
         const items = []
         await Promise.all( 
             itemsList.map((item, index) => 
                 this.extractData(extractor, $, $(item), index).then((itemData) => {
-                    if (itemData) {
+                    if (itemData !== false) {
 
                         items.push(itemData);
                         
                         extractor.debug && console.log(`[${extractor.id}] Crawled data`, itemData)
 
                     }
+                }).catch((error) => {
+
+                    switch (this.options.onItemError) {
+                        case Action.ERROR: 
+                            throw error;
+                        case Action.EXCLUDE: 
+                            break;
+                        // TODO: case Action.IGNORE: 
+                        default:
+                            console.warn("Unhandled action:", this.options.onItemError);
+                    }
+
+                    // If no throw, we print error in console
+                    console.error(error);
+
                 })
             ) 
         );
@@ -261,7 +266,7 @@ export default class Scraper {
             }
 
             // Exclude item
-            if (value === Scraper.EXCLUDE_ITEM) {
+            if (value === Action.EXCLUDE) {
 
                 return false;
 
