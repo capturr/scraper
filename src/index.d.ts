@@ -28,16 +28,9 @@ export type TInstanceOptions = {
     debug?: boolean,
     outputDir?: string,
 
-    onError?: (
-        type: 'request' | 'extraction' | 'processing',
-        error: Error,
-        instance: Scraper,
-        extractor: TExtractor<{}>
-    ) => void,
-
     // For request extractors
     proxy?: Proxies,
-    request?: (options: TRequestExtractor) => Promise<string>,
+    adapter?: (options: TRequestExtractor) => Promise<string>,
 }
 
 /*----------------------------------
@@ -67,7 +60,7 @@ export type THtmlExtractor = {
 
 export type TRequestExtractor = TRequestOptions & {
     proxy?: Proxies,
-    request?: (options: TRequestExtractor) => Promise<string>,
+    adapter?: (options: TRequestExtractor) => Promise<string>,
 }
 
 export type TRequestOptions = {

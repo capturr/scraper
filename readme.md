@@ -4,6 +4,8 @@ Simple & Human-Friendly HTML Scraper with Proxy Rotator.
 
 [![npm](https://img.shields.io/npm/v/declarative-scraper)](https://www.npmjs.com/package/declarative-scraper)
 
+**/!\ WARNING: This package is not enough mature to be used in production.**
+
 ## Installation
 
 ```bash
@@ -20,7 +22,7 @@ Scraper.scrape({
     html?: string,
     url?: string,
     proxy?: ProxiesRotator,
-    request?: Function,
+    adapter?: Function,
 
     items?: Function,
     extract: Function,
@@ -39,4 +41,6 @@ Scraper.scrape({
 ## TODO
 
 * Better doc
+* Strict type checking
 * Fix typings for extracted data
+* Tests

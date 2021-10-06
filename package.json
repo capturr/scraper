@@ -1,18 +1,21 @@
 {
     "name": "declarative-scraper",
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
-    "description": "Simple & Human-Friendly HTML Scraper with Proxy Rotator",
+    "description": "Simple & Human-Friendly HTML Scraper with Json-ld support",
     "keywords": [
         "scraper",
         "spider",
         "crawler",
+        "crawling",
+        "scraping",
         "web",
         "html",
         "extract",
+        "extractor",
         "jsonld",
         "data"
     ],
-    "version": "0.0.9",
+    "version": "0.1.0",
     "license": "MIT",
     "private": false,
     "main": "bin/index.js",

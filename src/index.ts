@@ -18,7 +18,7 @@ export { default as ProxyRotator } from './ProxyRotator'
 import type { 
     TDonnees, Got,
     TInstanceOptions, TExtractor, TRequestExtractor
-} from './types';
+} from './index.d';
 
 /*----------------------------------
 - HELPERS
@@ -45,6 +45,19 @@ export const gotAdapter = (got: Got) =>
         //timeout: 5000
 
     });
+
+export class ScrapingError extends Error {
+
+    public constructor(
+        message: string | Error,
+        public operation: 'request' | 'extraction' | 'processing',
+        public scraper: Scraper,
+        public extractor?: TExtractor<{}>,
+    ) {
+        super( typeof message === "string" ? message : message.message );
+    }
+
+}
 
 /*----------------------------------
 - METHODES
@@ -74,9 +87,9 @@ export default class Scraper {
 
         if ('url' in extractor) {
 
-            if (extractor.request === undefined)
-                extractor.request = this.options.request;
-            if (extractor.request === undefined)
+            if (extractor.adapter === undefined)
+                extractor.adapter = this.options.adapter;
+            if (extractor.adapter === undefined)
                 throw new Error(`A request adapter must be specified in options in order to make url requests.`);
 
             let url = extractor.url;
@@ -88,22 +101,19 @@ export default class Scraper {
                 url = currentProxy.prefix + url;
             }
 
-            extractor.debug && console.log(`Requete vers ${url}`);
+            extractor.debug && console.log(`[${extractor.id}] Sending request to ${url}`);
 
-            try {
-                html = await extractor.request({
-                    ...extractor, 
-                    url,
-                    method: extractor.method || 'GET'
-                });
-            } catch (e) {
+            html = await extractor.adapter({
 
-                if (this.options.onError)
-                    this.options.onError('request', e, this, extractor);
-                else
-                    throw e;
-                
-            }
+                ...extractor, 
+                url,
+                method: extractor.method || 'GET'
+
+            }).catch((e) => {
+
+                throw new ScrapingError(e, 'request', this, extractor);
+
+            });
 
             if (html && this.options.outputDir) {
                 const fichierLocal = this.options.outputDir + '/' + extractor.id + '.html';
@@ -127,7 +137,7 @@ export default class Scraper {
         // Extraction de items
         const results = await this.extractItems(extractor, $, element);
 
-        extractor.debug && console.log(`Terminé.`);
+        extractor.debug && console.log(`[${extractor.id}] Finished.`);
 
         return results;
 
@@ -148,19 +158,20 @@ export default class Scraper {
         const finder = (selector: string) => elements.find(selector)
         const itemsList = extractor.items( finder ).toArray();
 
-        extractor.debug && console.log(`[${extractor.id}] ${itemsList.length} Items trouvés`);
-        if (itemsList.length === 0 && this.options.outputDir) {
+        extractor.debug && console.log(`[${extractor.id}] ${itemsList.length} Items were found`);
+        
+        // Log file
+        if (this.options.outputDir) {
 
-            const fichierLocal = this.options.outputDir + '/' + extractor.id + '.html';
-            fs.outputFileSync(fichierLocal, $.root().html());
+            const logFile = this.options.outputDir + '/' + extractor.id + '.html';
+            fs.outputFileSync(logFile, $.root().html());
 
             // Pas normal
-            extractor.debug && console.warn(`Aucun résultat trouvé. html enregistré dans ${fichierLocal}`);
+            extractor.debug && console.warn(`Aucun résultat trouvé. html enregistré dans ${logFile}`);
 
         }
 
         const items = []
-
         await Promise.all( 
             itemsList.map((item, index) => 
                 this.extractData(extractor, $, $(item), index).then((itemData) => {
@@ -183,9 +194,8 @@ export default class Scraper {
         ...options
     })
 
-    // object = données crawlées
-    // 0 = exclusion de l'item
-    // -1 = Arrêt de l'itération des résultats
+    // object = scraped data
+    // false = exclude current item
     private async extractData<TExtractedData extends TDonnees>(
         extractor: TExtractor<TExtractedData>,
         $: CheerioAPI,
@@ -200,23 +210,19 @@ export default class Scraper {
             ? extractor.extract(finder, $jsonld, element)
             : extractor.extract;
             
+        // Extract data
         for (const dataname in itemData) {
 
             let value = itemData[dataname];
             if (typeof value === 'object' && value._subset === true) {
 
-                try {
+                value = await this.extractItems(value, $, element).catch((e) => {
 
-                    value = await this.extractItems(value, $, element);
+                    extractor.debug && console.warn(`[${extractor.id}] Error while extracting ${dataname}:`, e);
+                    //value = null;
+                    throw new ScrapingError(e, 'extraction', this, extractor);
 
-                } catch (error) {
-
-                    extractor.debug && console.warn(`[extractData] Erreur lors de l'extraction de ${dataname}:`, error);
-                    value = null;
-
-                    if (this.options.onError)
-                        this.options.onError('extraction', error, this, extractor);
-                }
+                });
                     
             } else if (typeof value === 'string') {
 
@@ -224,49 +230,35 @@ export default class Scraper {
                 
             }
 
-            // Echec de l'extraction
+            // No value extracted
             if (value === undefined || value === null || value === '') {
 
-                const exclude = extractor.required !== undefined && extractor.required.includes(dataname);
-                extractor.debug && console.warn(`[extractData] Echec de l'extraction de ` + dataname, exclude ? "Exclusion de l'item" : '');
-                if (exclude)
-                    return false;
+                const isRequired = extractor.required !== undefined && extractor.required.includes(dataname);
+                extractor.debug && console.warn(`[${extractor.id}] Empty value for ` + dataname, isRequired ? "(required)" : '(optionnal)');
+                if (isRequired)
+                    throw new ScrapingError("Required data « " + dataname + " » is empty", 'extraction', this, extractor);
 
                 value = undefined;
             }
 
-            // assignation de la valeur extraite
-
             itemData[dataname] = value;
 
         }
+        extractor.debug && console.log(`[${extractor.id}] Extracted data (raw):`, itemData);
 
-        extractor.debug && console.log('[extractData]', extractor.id, 'Données brutes extraites:', itemData);
+        if (extractor.process === undefined)
+            return itemData;
 
-        if (extractor.process !== undefined) {
+        // Process data
+        const processed = await extractor.process(itemData, index).catch((error) => {
 
-            try {
+            extractor.debug && console.warn(`[${extractor.id}] Error while processing extracted data`, error);
 
-                const processResult = await extractor.process(itemData, index);
-                if (processResult === false)
-                    return false;
+            throw new ScrapingError(error, 'processing', this, extractor);
 
-                extractor.debug && console.log('[extractData]', extractor.id, 'Données après traitement:', processResult);
+        })
 
-                return processResult;
-                
-            } catch (error) {
-
-                extractor.debug && console.warn('[extractData]', extractor.id, "Erreur lors du traitement des données", error);
-
-                if (this.options.onError)
-                    this.options.onError('processing', error, this, extractor);
-
-                return false;
-                
-            }
-        }
-
-        return itemData;
+        extractor.debug && console.log(`[${extractor.id}] Extracted data (processed)`, processed);
+        return processed;
     }
 }
