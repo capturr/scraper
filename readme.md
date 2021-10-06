@@ -71,54 +71,54 @@ Output:
 ```json
 [
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-        name: "Bitcoin",
-        price: 48415.71
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+        "name": "Bitcoin",
+        "price": 48415.71
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
-        name: "Ethereum",
-        price: 3634.48
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+        "name": "Ethereum",
+        "price": 3634.48
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png",
-        name: "Cardano",
-        price: 2.49
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png",
+        "name": "Cardano",
+        "price": 2.49
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png",
-        name: "Binance Coin",
-        price: 429.91
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png",
+        "name": "Binance Coin",
+        "price": 429.91
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
-        name: "Tether",
-        price: 1
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+        "name": "Tether",
+        "price": 1
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
-        name: "XRP",
-        price: 1.12
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
+        "name": "XRP",
+        "price": 1.12
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png",
-        name: "Solana",
-        price: 161.09
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png",
+        "name": "Solana",
+        "price": 161.09
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png",
-        name: "Polkadot",
-        price: 35.9
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png",
+        "name": "Polkadot",
+        "price": 35.9
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/74.png",
-        name: "Dogecoin",
-        price: 0.2461
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/74.png",
+        "name": "Dogecoin",
+        "price": 0.2461
     },
     {
-        logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-        name: "USD Coin",
-        price: 1
+        "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+        "name": "USD Coin",
+        "price": 1
     }
 ]
 ```
