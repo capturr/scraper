@@ -59,7 +59,7 @@ interface TScrapingContext {
 export class ScrapingError extends Error implements TScrapingContext {
 
     public isScrapingError = true;
-    
+
     public scraper: Scraper
     public extractor: TExtractor<{}>
     public html?: string
@@ -87,6 +87,8 @@ export class ScrapingError extends Error implements TScrapingContext {
 - METHODES
 ----------------------------------*/
 export default class Scraper {
+
+    public static EXCLUDE_ITEM = Symbol.for('EXCLUDE_ITEM');
     
     public constructor( private options: TInstanceOptions ) {
         
@@ -258,12 +260,17 @@ export default class Scraper {
                 
             }
 
-            // No value extracted
-            if (value === undefined || value === null || value === '') {
+            // Exclude item
+            if (value === Scraper.EXCLUDE_ITEM) {
+
+                return false;
+
+            // Empty value
+            } else if (value === undefined || value === null || value === '') {
 
                 const isRequired = extractor.required !== undefined && extractor.required.includes(dataname);
                 if (isRequired)
-                    throw new ScrapingError("Required data « " + dataname + " » is empty (= " + JSON.stringify(value) + ")", {
+                    throw new ScrapingError("Required data « " + dataname + " » is empty (raw value = " + JSON.stringify(value) + ")", {
                         scraper: this,
                         extractor,
                         html: element.html()

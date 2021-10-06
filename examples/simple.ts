@@ -47,7 +47,8 @@ scraper.scrape({
 
         logo: $('> td:eq(2) img.coin-logo').attr('src'),
 
-        name: $('> td:eq(2) p[font-weight="semibold"]').text(),
+        // The current item will be excluded from results if the name can't be extracted
+        name: $('> td:eq(2) p[font-weight="semibold"]').text() || Scraper.EXCLUDE_ITEM,
 
         price: $('> td:eq(3)').text()
 
