@@ -46,15 +46,37 @@ export const gotAdapter = (got: Got) =>
 
     });
 
-export class ScrapingError extends Error {
+interface TScrapingContext {
+
+    origin?: Error,
+    scraper: Scraper, 
+    extractor: TExtractor<{}>, 
+
+    html?: string,
+    rawItemData?: any,
+}
+
+export class ScrapingError extends Error implements TScrapingContext {
+
+    public scraper: Scraper
+    public extractor: TExtractor<{}>
+    public html?: string
+
+    public origin?: Error
+    public rawItemData?: any
 
     public constructor(
-        message: string | Error,
-        public operation: 'request' | 'extraction' | 'processing',
-        public scraper: Scraper,
-        public extractor?: TExtractor<{}>,
+        public message: string,
+        context: TScrapingContext
     ) {
-        super( typeof message === "string" ? message : message.message );
+        super( message );
+
+        this.scraper = context.scraper;
+        this.extractor = context.extractor;
+        this.origin = context.origin;
+        
+        this.html = context.html;
+        this.rawItemData = context.rawItemData;
     }
 
 }
@@ -109,9 +131,13 @@ export default class Scraper {
                 url,
                 method: extractor.method || 'GET'
 
-            }).catch((e) => {
+            }).catch((error) => {
 
-                throw new ScrapingError(e, 'request', this, extractor);
+                throw new ScrapingError('Request to ' + url, {
+                    origin: error,
+                    scraper: this,
+                    extractor
+                });
 
             });
 
@@ -165,9 +191,7 @@ export default class Scraper {
 
             const logFile = this.options.outputDir + '/' + extractor.id + '.html';
             fs.outputFileSync(logFile, $.root().html());
-
-            // Pas normal
-            extractor.debug && console.warn(`Aucun résultat trouvé. html enregistré dans ${logFile}`);
+            extractor.debug && console.info(`[${extractor.id}] Saved output in ${logFile}`);
 
         }
 
@@ -216,11 +240,13 @@ export default class Scraper {
             let value = itemData[dataname];
             if (typeof value === 'object' && value._subset === true) {
 
-                value = await this.extractItems(value, $, element).catch((e) => {
-
-                    extractor.debug && console.warn(`[${extractor.id}] Error while extracting ${dataname}:`, e);
-                    //value = null;
-                    throw new ScrapingError(e, 'extraction', this, extractor);
+                value = await this.extractItems(value, $, element).catch((error) => {
+                    throw new ScrapingError(`Error while extracting ${dataname}`, {
+                        origin: error,
+                        scraper: this,
+                        extractor,
+                        html: element.html()
+                    });
 
                 });
                     
@@ -234,9 +260,14 @@ export default class Scraper {
             if (value === undefined || value === null || value === '') {
 
                 const isRequired = extractor.required !== undefined && extractor.required.includes(dataname);
-                extractor.debug && console.warn(`[${extractor.id}] Empty value for ` + dataname, isRequired ? "(required)" : '(optionnal)');
                 if (isRequired)
-                    throw new ScrapingError("Required data « " + dataname + " » is empty", 'extraction', this, extractor);
+                    throw new ScrapingError("Required data « " + dataname + " » is empty", {
+                        scraper: this,
+                        extractor,
+                        html: element.html()
+                    });
+                else
+                    extractor.debug && console.warn(`[${extractor.id}] Empty value for ` + dataname);
 
                 value = undefined;
             }
@@ -251,14 +282,16 @@ export default class Scraper {
 
         // Process data
         const processed = await extractor.process(itemData, index).catch((error) => {
-
-            extractor.debug && console.warn(`[${extractor.id}] Error while processing extracted data`, error);
-
-            throw new ScrapingError(error, 'processing', this, extractor);
-
+            throw new ScrapingError(`Error while processing extracted data`, {
+                origin: error,
+                scraper: this,
+                extractor,
+                html: element.html(),
+                rawItemData: itemData
+            });
         })
 
-        extractor.debug && console.log(`[${extractor.id}] Extracted data (processed)`, processed);
+        extractor.debug && processed !== undefined && console.log(`[${extractor.id}] Extracted data (processed)`, processed);
         return processed;
     }
 }
