@@ -5,20 +5,9 @@ import got from 'got';
 // Configure your scraper
 const scraper = new Scraper({
 
-    request: gotAdapter(got),
+    adapter: gotAdapter(got),
     // Show debug infos 
     debug: true,
-    // Handle errors
-    onError: (type, error, options, scraper) => {
-
-        console.error(
-            `An ${type} error eccured while scraping data from ${options["url"] || 'HTML'}:`,
-            error,
-            '|| options =', options,
-            '|| scraper =', scraper
-        );
-
-    },
 
     /*proxy: new ProxyRotator({
 
@@ -65,7 +54,7 @@ scraper.scrape({
     }),
 
     // 3. Processing
-    required: ['name', 'price'], // If name or price cannot be extracted, the item will be excluded from results
+    required: ['name', 'price'], // If name or price cannot be extracted, an error will be thrown
     process: async ({ logo, name, price }) => ({ // Normalize / Format the extracted data
 
         logo,

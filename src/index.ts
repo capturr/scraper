@@ -58,6 +58,8 @@ interface TScrapingContext {
 
 export class ScrapingError extends Error implements TScrapingContext {
 
+    public isScrapingError = true;
+    
     public scraper: Scraper
     public extractor: TExtractor<{}>
     public html?: string
@@ -74,7 +76,7 @@ export class ScrapingError extends Error implements TScrapingContext {
         this.scraper = context.scraper;
         this.extractor = context.extractor;
         this.origin = context.origin;
-        
+
         this.html = context.html;
         this.rawItemData = context.rawItemData;
     }
@@ -245,7 +247,7 @@ export default class Scraper {
                         origin: error,
                         scraper: this,
                         extractor,
-                        html: element.html()
+                        html: element.html(),
                     });
 
                 });
@@ -261,7 +263,7 @@ export default class Scraper {
 
                 const isRequired = extractor.required !== undefined && extractor.required.includes(dataname);
                 if (isRequired)
-                    throw new ScrapingError("Required data « " + dataname + " » is empty", {
+                    throw new ScrapingError("Required data « " + dataname + " » is empty (= " + JSON.stringify(value) + ")", {
                         scraper: this,
                         extractor,
                         html: element.html()
