@@ -4,3 +4,4 @@
 /crawlers/debug
 /.vscode
 /*.code-workspace
+/test.ts

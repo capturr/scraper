@@ -6,7 +6,7 @@
 import isURL from 'validator/lib/isURL';
 
 // Interval
-import { allowedMethods, bodyTypes, TRequestWithExtractors, TExtractors } from './types';
+import { allowedMethods, bodyTypes, TRequestWithExtractors, TExtractor } from './types';
 
 /*----------------------------------
 - TYPES
@@ -78,7 +78,7 @@ export default (input: TObjetDonnees): TRequestWithExtractors => {
     
 }
 
-const validateExtractors = (extract: TObjetDonnees, path: string): TExtractors => {
+const validateExtractors = (extract: TObjetDonnees, path: string): TExtractor => {
 
     if (!extract || typeof extract !== 'object')
         throw new BadRequest("The " + path + " option must be an object or an array (" + typeof extract + " given).");
@@ -106,8 +106,8 @@ const validateExtractors = (extract: TObjetDonnees, path: string): TExtractors =
         if (Object.keys(extract).length === 0)
             throw new BadRequest("The " + path + " parameter must contain at least one entry.");
 
-        // @ts-ignore: Property '$foreach' does not exist on type 'TExtractors'
-        const { $foreach, ...toExtract } = extract as TExtractors;
+        // @ts-ignore: Property '$foreach' does not exist on type 'TExtractor'
+        const { $foreach, ...toExtract } = extract as TExtractor;
 
         // Foreach
         if ($foreach !== undefined && typeof $foreach !== "string")

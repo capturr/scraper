@@ -1,9 +1,3 @@
-export type TRequestWithExtractors = TRequestOptions & {
-    extract?: TExtractors,
-    withBody?: boolean,
-    withHeaders?: boolean,
-}
-
 /*----------------------------------
 - REQUEST
 ----------------------------------*/
@@ -11,15 +5,24 @@ export type TRequestWithExtractors = TRequestOptions & {
 export const allowedMethods = ["GET", "POST"];
 export const bodyTypes = ["form", "json"];
 
-// Request
-export type TRequestOptions = {
+export type TRequestWithExtractors = TRequest & {
+    extract?: TExtractor,
+    withBody?: boolean,
+    withHeaders?: boolean,
+}
+
+export type TRequest = TBasicRequest | TRequestWithBody;
+
+export type TBasicRequest = {
     url: string,
     method?: HttpMethod,
     cookies?: string,
-} & ({} | {
-    body: { [cle: string]: any },
+}
+
+export type TRequestWithBody = TBasicRequest & {
+    body: { [key: string]: any },
     bodyType: typeof bodyTypes[number]
-})
+}
 
 export type HttpMethod = typeof allowedMethods[number];
 
@@ -27,7 +30,7 @@ export type HttpMethod = typeof allowedMethods[number];
 - SCRAPER
 ----------------------------------*/
 
-export type TExtractors = TValueExtractor | TItemsExtractor;
+export type TExtractor = TValueExtractor | TItemsExtractor;
 
 export type TValueExtractor = [
     selector: "this" | string,
@@ -39,13 +42,17 @@ export type TValueExtractor = [
 export type TItemsExtractor = (
     { $foreach?: string } // un ou plusieurs selecteurs CSS, séparés par une vigule
     &
-    { [name: string]: TExtractors }
+    { [name: string]: TExtractor }
 )
+
+/*----------------------------------
+- RESPONSE
+----------------------------------*/
 
 export type TScrapeResult<TData extends any = any> = {
     url: string,
     status: number,
-    headers?: { [cle: string]: string },
+    headers?: { [key: string]: string },
     body?: string,
     data?: TData
 }

@@ -15,33 +15,31 @@ export { default as validate } from './validate';
 
 import {
     TRequestWithExtractors,
-    TExtractors,
-    HttpMethod
+    TExtractor,
+    TScrapeResult
 } from './types';
 
-type TOptions = Omit<TRequestWithExtractors, 'extract' | 'url'>;
+type TOptions = Omit<TRequestWithExtractors, 'extract' | 'url' | 'method'>;
 
 /*----------------------------------
 - SCRAPER
 ----------------------------------*/
-export default function Scraper( apiKey: string ) {
+export default class Scraper {
 
-    function scrape( method: HttpMethod, url: string, options?: Omit<TOptions, 'method'>, extract?: TExtractors ) {
+    public constructor( public apiKey: string ) {}
+
+    public scrape<TData extends any = any>(requests: TRequestWithExtractors[]): Promise<TScrapeResult<TData>[]> {
         return new Promise((resolve, reject) => request({
-            method: method,
-            url: 'https://rapidapi.com/post',
+            method: 'POST',
+            url: 'https://fast-and-undetectable-scraping-proxy.p.rapidapi.com',
             headers: {
                 'content-type': 'application/json',
-                'x-rapidapi-host': 'rapidapi.com',
-                'x-rapidapi-key': this.apiKey,
-                useQueryString: true
+                'x-rapidapi-host': 'fast-and-undetectable-scraping-proxy.p.rapidapi.com',
+                'x-rapidapi-key': this.apiKey
             },
-            body: validate({
-                url,
-                method,
-                extract,
-                ...options
-            }),
+            body: {
+                requests: validate(requests)
+            },
             json: true
         }, (error, response, body) => {
 
@@ -55,12 +53,14 @@ export default function Scraper( apiKey: string ) {
         }));
     }
 
-    function get( url: string, options?: TOptions, extract?: TExtractors ) {
-        return scrape('GET', url, options, extract);
+    public get<TData extends any = any>( 
+        url: string, 
+        options?: TOptions, 
+        extract?: TExtractor 
+    ): Promise<TScrapeResult<TData>> {
+        return this.scrape<TData>([{ method: 'GET', url, extract, ...options }]).then( res => res[0] );
     }
-
-    return { scrape, get }
 
 }
 
-module.exports = Scraper;
+module.exports = (apiKey: string) => new Scraper(apiKey);

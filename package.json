@@ -35,9 +35,11 @@
         "prepare": "npm run build"
     },
     "dependencies": {
+        "request": "^2.88.2",
         "validator": "^13.7.0"
     },
     "devDependencies": {
+        "@types/node": "^16.11.9",
         "@types/validator": "^13.7.0",
         "typescript": "^4.3.5"
     }
