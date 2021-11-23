@@ -4,14 +4,16 @@ All In One solution to **scrape webpage in Node.js** without headaches.
 
 **/!\ Currently in development**
 
-✅ Fully automated proxy rotation with HQ residential IPs. No captcha, and you will never be detected as a bot or proxy user
-✅ Integrated data extraction with CSS / jQuery selectors, filters, conditions and iterators
-✅ Smart data filters: URL, prices, title + custom filters on request
-✅ Up to 3 requests per call
-✅ Allowed to send json or form-encoded body & cookies
-✅ Returns response body, headers, final URL & status code
-✅ Supports redirects 
-✅ Presets for popular websites: Coming soon
+## Features
+
+* Fully automated proxy rotation with HQ residential IPs. No captcha, and you will never be detected as a bot or proxy user
+* Integrated data extraction with CSS / jQuery selectors, filters, conditions and iterators
+* Smart data filters: URL, prices, title + custom filters on request
+* Up to 3 requests per call
+* Allowed to send json or form-encoded body & cookies
+* Returns response body, headers, final URL & status code
+* Supports redirects 
+* Presets for popular websites: Coming soon
 
 ## Get started: 5 minutes chrono
 
