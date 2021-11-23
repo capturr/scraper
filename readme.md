@@ -22,9 +22,11 @@ Scraping API is an All In One solution to **scrape webpage in Node.js** without 
     ```
 
 2. Get your **API key**
-    Simply by [creating an account](https://rapidapi.com/auth/sign-up?referral=/dopamyn-network-dopamyn-network-default/api/fast-and-undetectable-scraping-proxy/) on RapidAPI.
+    Simply by <a target="_blank" href="https://rapidapi.com/auth/sign-up?referral=/dopamyn-network-dopamyn-network-default/api/fast-and-undetectable-scraping-proxy/">creating an account</a> on RapidAPI.
     
-    [![Get Your API Key](https://files.readme.io/7002e7f-c563a12-rapidapi-badge-dark.png "Get Your API Key")](https://rapidapi.com/auth/sign-up?referral=/dopamyn-network-dopamyn-network-default/api/fast-and-undetectable-scraping-proxy/)
+    <a target="_blank" href="https://rapidapi.com/auth/sign-up?referral=/dopamyn-network-dopamyn-network-default/api/fast-and-undetectable-scraping-proxy/">
+        <img src="https://files.readme.io/7002e7f-c563a12-rapidapi-badge-dark.png" />
+    </a>
 
 3. **Enjoy** scraping without headaches !
 
@@ -184,7 +186,7 @@ type TRequestWithExtractors = {
 }
 ```
 
-Learn More: [Allowed HTTP Methods](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L5) / [Allowed Body Types](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L6) 
+Learn More: <a target="_blank" href="https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L5">Allowed HTTP Methods</a> / <a target="_blank" href="https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L6">Allowed Body Types</a>
 
 ## Extractors
 
@@ -211,7 +213,7 @@ type TValueExtractor = [
 
 Its a an array composed by at least three values:
 
-1. **Selector**: A [CSS](https://www.w3schools.com/cssref/css_selectors.asp) / [jQuery-like selector](https://www.w3schools.com/jquery/jquery_ref_selectors.asp) to match the DOM element you are interested in. By example:
+1. **Selector**: A <a target="_blank" href="https://www.w3schools.com/cssref/css_selectors.asp">CSS</a> / <a target="_blank" href="https://www.w3schools.com/jquery/jquery_ref_selectors.asp">jQuery-like selector</a> to match the DOM element you are interested in. By example:
     - `h3`: Simply matches all `h3` elements
         - Matches: 
             ```html
@@ -244,7 +246,7 @@ Its a an array composed by at least three values:
             ```
 
 2. **Attribute**: The DOM element attribute that contains the value you want to extract. It includes:
-    - [Native HTML attributes](https://www.w3schools.com/tags/ref_attributes.asp): `href`, `class`, `src`, etc ...
+    - <a href="https://www.w3schools.com/tags/ref_attributes.asp" target="_blank">Native HTML attributes</a>: `href`, `class`, `src`, etc ...
     - `"text"`: Get the element content text
     - `"html"`: Get the element content html
 
@@ -349,7 +351,7 @@ type TScrapeResult<TData extends any = any> = {
 }
 ```
 
-Learn more: [List of HTTP status codes](https://wikipedia.org/wiki/List_of_HTTP_status_codes).
+Learn more: <a href="https://wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">List of HTTP status codes</a>
 
 ### Optimize the response time
 
@@ -433,7 +435,7 @@ type Product = {
     description?: string
 }
 
-scraper.get("http://example.com/products", {}, {
+scraper.get<Product[]>("http://example.com/products", {}, {
     
     $foreach: "#products > article.product",
 
@@ -477,7 +479,7 @@ Here is the response:
 }
 ```
 
-Did you notice ? Two items were excluded:
+Did you notice ? Two items were excluded, because the `price` data has been marked as required, but:
 
 * "Aliens can't sleep because of this cute DJ" doesn't contains any element that matches with `> .price`
 * "Gentleman dropped his litter into a black hole" contains a `.price` element, but the content text doesn't represents a price
@@ -488,8 +490,8 @@ What if you play with the examples ?
 
 ## Need any additionnal information or help ? 
 
-* Search if an issue [has not been created before](https://github.com/scrapingapi/scraper/issues)
-* If not, feel free to [create a new issue](https://github.com/scrapingapi/scraper/issues/new)
+* Search if an issue <a href="https://github.com/scrapingapi/scraper/issues" target="_blank">has not been created before</a>
+* If not, feel free to <a href="https://github.com/scrapingapi/scraper/issues/new" target="_blank">create a new issue</a>
 * For more personal questions, or for profesionnal inquiries: 
     <details>
     <summary>Send me an email</summary>
@@ -499,4 +501,4 @@ What if you play with the examples ?
 
 ## Credits
 
-Space cat images are from [WallpaperCave](https://wallpapercave.com/space-cat-wallpapers).
+<a href="https://wallpapercave.com/space-cat-wallpapers" target="_blank">WallpaperCave</a>
