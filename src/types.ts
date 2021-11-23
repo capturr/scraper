@@ -1,113 +1,51 @@
-/*----------------------------------
-- DEPENDANCES
-----------------------------------*/
-
-// npm
-import type { Cheerio, Element } from "cheerio"
-import type { TJsonldReader } from 'jsonld-extract';
-
-// Libs
-import type Proxies from './ProxyRotator';
-
-/*----------------------------------
-- GENERAL
-----------------------------------*/
-
-import type Scraper from '.';
-
-export type TDonnees = { [cle: string]: any }
-
-export type Got = (opts: any) => Promise<any>;
-
-export const Action = {
-    EXCLUDE: Symbol.for('EXCLUDE'),
-    IGNORE: Symbol.for('IGNORE'),
-    ERROR: Symbol.for('ERROR'),
+export type TRequestWithExtractors = TRequestOptions & {
+    extract?: TExtractors,
+    withBody?: boolean,
+    withHeaders?: boolean,
 }
 
 /*----------------------------------
-- INSTANCE OPTIONS
+- REQUEST
 ----------------------------------*/
 
-export type TInstanceOptions = {
+export const allowedMethods = ["GET", "POST"];
+export const bodyTypes = ["form", "json"];
 
-    debug?: boolean,
-    outputDir?: string,
-    onItemError?: typeof Action[keyof typeof Action]
-
-    // For request extractors
-    proxy?: Proxies,
-    adapter?: (options: TRequestExtractor) => Promise<string>,
-}
-
-/*----------------------------------
-- SCRAPING OPTIONS
-----------------------------------*/
-
-export type TExtractor<TExtractedData extends TDonnees, TProcessedData extends TDonnees = {}> = {
-
-    id: string,
-
-    items?: ($: TFinder) => Cheerio<Element>,
-    extract: TExtractFunction<TExtractedData>,
-    process?: (data: TExtractedData, index: number) => Promise<TProcessedData | false>,
-    required?: string/*(keyof Partial<TExtractedData>)*/[],
-
-    debug?: boolean
-
-} & (
-    THtmlExtractor
-    | 
-    TRequestExtractor
-)
-
-export type THtmlExtractor = {
-    html: string
-}
-
-export type TRequestExtractor = TRequestOptions & {
-    proxy?: Proxies,
-    adapter?: (options: TRequestExtractor) => Promise<string>,
-}
-
+// Request
 export type TRequestOptions = {
     url: string,
     method?: HttpMethod,
-    body?: string,
-    headers?: { [cle: string]: string },
-}
+    cookies?: string,
+} & ({} | {
+    body: { [cle: string]: any },
+    bodyType: typeof bodyTypes[number]
+})
 
-// https://github.com/sindresorhus/got/blob/main/source/core/options.ts#L247
-export type HttpMethod =
-    | 'GET'
-    | 'POST'
-    | 'PUT'
-    | 'PATCH'
-    | 'HEAD'
-    | 'DELETE'
-    | 'OPTIONS'
-    | 'TRACE'
-    | 'get'
-    | 'post'
-    | 'put'
-    | 'patch'
-    | 'head'
-    | 'delete'
-    | 'options'
-    | 'trace';
+export type HttpMethod = typeof allowedMethods[number];
 
 /*----------------------------------
-- EXTRACTION
+- SCRAPER
 ----------------------------------*/
 
-type TFinder = (selector: string) => Cheerio<Element>
+export type TExtractors = TValueExtractor | TItemsExtractor;
 
-type TExtractFunction<TExtractedData extends TDonnees> = (
-    TDataList<TExtractedData>
-    |
-    (($: TFinder, $jsonld: TJsonldReader, element: Cheerio<Element>) => TDataList<TExtractedData>)
+export type TValueExtractor = [
+    selector: "this" | string,
+    attribute: "text" | "html" | string,
+    required: boolean,
+    ...filters: string[]
+]
+
+export type TItemsExtractor = (
+    { $foreach?: string } // un ou plusieurs selecteurs CSS, séparés par une vigule
+    &
+    { [name: string]: TExtractors }
 )
 
-type TDataList<TExtractedData extends TDonnees> = {
-    [name in keyof TExtractedData]: /* Extraction */TExtractor<TExtractedData> | /* Raw data */ any
+export type TScrapeResult<TData extends any = any> = {
+    url: string,
+    status: number,
+    headers?: { [cle: string]: string },
+    body?: string,
+    data?: TData
 }

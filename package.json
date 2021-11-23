@@ -1,21 +1,24 @@
 {
-    "name": "declarative-scraper",
+    "name": "scrapingapi",
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
     "description": "Simple & Human-Friendly HTML Scraper with Json-ld support",
     "keywords": [
-        "scraper",
-        "spider",
+        "scraping",
         "crawler",
         "crawling",
-        "scraping",
+        "crawl",
+        "captcha",
+        "bot",
+        "robot",
+        "proxy",
+        "spider",
+        "scraper",
         "web",
         "html",
         "extract",
-        "extractor",
-        "jsonld",
         "data"
     ],
-    "version": "0.1.1",
+    "version": "0.2.0",
     "license": "MIT",
     "private": false,
     "main": "bin/index.js",
@@ -24,23 +27,18 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git://github.com/dopamyn/scraper.git"
+        "url": "git://github.com/scrapingapi/scraper.git"
     },
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
-        "example:simple": "ts-node examples/simple.ts",
         "prepare": "npm run build"
     },
     "dependencies": {
-        "cheerio": "^1.0.0-rc.10",
-        "condense-whitespace": "^2.0.0",
-        "fs-extra": "^10.0.0",
-        "html-entities": "^2.3.2",
-        "jsonld-extract": "^0.0.8"
+        "validator": "^13.7.0"
     },
     "devDependencies": {
-        "got": "^11.8.2",
+        "@types/validator": "^13.7.0",
         "typescript": "^4.3.5"
     }
 }
