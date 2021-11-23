@@ -1,18 +1,24 @@
-# Scraping API (official library)
+# Scraping API Official Library
 
-Scraping API is an All In One solution to **scrape webpage in Node.js** without headaches.
+[![npm](https://img.shields.io/npm/v/scrapingapi)](https://www.npmjs.com/package/scrapingapi)
+
+ScrapingAPI is an All In One solution to **scrape webpage in Node.js** without headaches.
 
 > Current status: **Internal tests**. Not available for the public for now.
+
+![How does ScraperAPI works](https://raw.githubusercontent.com/scrapingapi/scraper/main/scheme.jpg "How does ScraperAPI works")
 
 ## Features
 
 * Fully automated **proxy rotation** with HQ **residential IPs**. No captcha, and you will never be detected as a bot or proxy user
-* Integrated **data extraction** with CSS / jQuery selectors, **filters** and **iterators**
+* Integrated [**data extraction**](#extractors) with CSS / jQuery selectors, **filters** and **iterators**
 * **Bulk requests**: Up to 3 per call
 * Allowed to send json / form-encoded body and cookies
 * Returns **response body, headers, final URL & status code**
 * Supports redirects 
 * Coming Soon: Presets for popular websites
+
+------------
 
 ## Get started in 5 minutes chrono
 
@@ -58,7 +64,7 @@ scraper.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
 
 The `Scraper.get` method sends a **GET request** to the provided URL, and returns a `Promise` with a `TScrapeResult` object.
 
-Jump to: [Request methods](#request-methods) / [Request options](#request-options) / [Response object](#response)
+🚀 Jump to: [Request methods](#request-methods) / [Request options](#request-options) / [Response object](#response)
 
 ![Google Search Example](https://raw.githubusercontent.com/scrapingapi/scraper/main/google-dom.jpg "Google Search Example")
 
@@ -90,7 +96,7 @@ Jump to: [Request methods](#request-methods) / [Request options](#request-option
 }
 ```
 
-Jump to: [Response object](#response)
+🚀 Jump to: [Response object](#response)
 
 ### Are you using Typescript / ESM ?
 
@@ -125,7 +131,22 @@ type BitcoinGoogleResults = {
 scraper.get<BitcoinGoogleResults>("https://www.google.com/search?q=bitcoin").then( ... );
 ```
 
-## Request: Methods
+------------------
+
+# Documentation
+
+* [Request](#request)
+    - [Methods](#request-methods)
+    - [Options](#request-options)
+* [Extractors](#extractors)
+    - [Value Extractor](#value-extractor)
+    - [Item Extractor](#item-extractor)
+* [Response](#response)
+* [Example](#another-example)
+
+## Request
+
+### Request Methods
 
 This library provides one method per supported HTTP method:
 
@@ -148,9 +169,10 @@ public scrape( requests: TRequestWithExtractors[] ): Promise<TScrapeResult[]>;
 ```
 
 [Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L31)
-Jump to: [Request options](#request-options) / [Extractors](#extractors) / [Response object](#response)
 
-## Request: Options
+🚀 Jump to: [Request options](#request-options) / [Extractors](#extractors) / [Response object](#response)
+
+### Request Options
 
 Each request options is represented by the `TRequestWithExtractors` type (the following definition is a simplified version):
 
@@ -179,7 +201,7 @@ type TRequestWithExtractors = {
 }
 ```
 
-Learn More: [Allowed HTTP Methods](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L5) / [Allowed Body Types](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L6) 
+💡 See: [Allowed HTTP Methods](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L5) / [Allowed Body Types](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L6) 
 
 ## Extractors
 
@@ -316,13 +338,13 @@ Consider the following extractor:
 
 It goal is to extract the title of every `article` element having the product class.
 
-Since we've iterating across items via a `$foreach`, the `> h3` will be executed inside every `article.product` element.
+Since we've iterated across items via a `$foreach`, the `> h3` selector will be executed inside every `article.product` element.
 
-In other words, the `name` data will match every `h3` that is a direct child to every `article.product` element.
+In other words, the `name` data will match every `h3` element that is a direct child of every `article.product` element.
 
 ## Response
 
-For each request you send, a `TScrapeResult` will be returned, containing the informations you've requested in the options.
+For each request you send, a `TScrapeResult` object will be returned, containing the informations you've requested in the options.
 
 ```typescript
 type TScrapeResult<TData extends any = any> = {
@@ -344,7 +366,7 @@ type TScrapeResult<TData extends any = any> = {
 }
 ```
 
-Learn more: [List of HTTP status codes](https://wikipedia.org/wiki/List_of_HTTP_status_codes).
+💡 Additionnal Resources: [List of HTTP status codes](https://wikipedia.org/wiki/List_of_HTTP_status_codes).
 
 ### Optimize the response time
 
@@ -354,11 +376,11 @@ Disable theses options as soon as you can:
 * withBody
 * withHeaders
 
-Theses three features can be useful, but it uses additionnal CPU resources, slows down communication between our proxies and our server and increase response size.
+While theses three features can be useful, it uses additionnal CPU resources, slows down communication between our proxies and our server and increase response size.
 
 ## Another example
 
-Consider that `http://example.com/products` contains the following HTML code:
+Consider that `http://example.com/products` responds with a webpage containing the following HTML:
 
 ```html
 <h2>Space Cat Holograms to motive you programming</h2>
@@ -417,7 +439,7 @@ Consider that `http://example.com/products` contains the following HTML code:
 </section>
 ```
 
-Let's extract the product list. 
+Let's extract the product list: 
 
 ```typescript
 type Product = {
@@ -472,18 +494,18 @@ Here is the response:
 }
 ```
 
-Did you notice ? Two items were excluded, because the `price` data has been marked as required, but:
+Did you notice ? In the request, the `price` data has been marked as required. but for two HTML elements we've iterated with the `$foreach` instruction, **the extractor wasn't able to extract the price**.
 
-* "Aliens can't sleep because of this cute DJ" doesn't contains any element that matches with `> .price`
-* "Gentleman dropped his litter into a black hole" contains a `.price` element, but the content text doesn't represents a price
+* `Aliens can't sleep because of this cute DJ` doesn't contains any element that matches with `> .price`
+* `Gentleman dropped his litter into a black hole` contains a `.price` element, but the content text doesn't represents a price
 
-## Ready to scrape the web ?
+-----------
 
-What if you play with the examples ?
+# About
 
-## Need any additionnal information or help ? 
+## Need any additional information or help ? 
 
-* Search if an issue [has not been created before](https://github.com/scrapingapi/scraper/issues)
+* Search if a related issue [has not been created before](https://github.com/scrapingapi/scraper/issues)
 * If not, feel free to [create a new issue](https://github.com/scrapingapi/scraper/issues/new)
 * For more personal questions, or for profesionnal inquiries: 
     <details>
@@ -494,4 +516,4 @@ What if you play with the examples ?
 
 ## Credits
 
-Space cat images are from [WallpaperCave](https://wallpapercave.com/space-cat-wallpapers).
+For any complaint about abused kittens that has been sent to the deep space, see it with [WallpaperCave](https://wallpapercave.com/space-cat-wallpapers).
