@@ -56,9 +56,9 @@ scraper.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
 });
 ```
 
-The `Scraper.get` method send a **GET request** to the provided URL, and returns a `Promise` with a `TScrapeResult` object.
+The `Scraper.get` method sends a **GET request** to the provided URL, and returns a `Promise` with a `TScrapeResult` object.
 
-Jump: [Request methods](#request-methods) / [Request options](#request-options) / [Response object](#response)
+Jump to: [Request methods](#request-methods) / [Request options](#request-options) / [Response object](#response)
 
 ![Google Search Example](https://raw.githubusercontent.com/scrapingapi/scraper/main/google-dom.jpg "Google Search Example")
 
@@ -90,7 +90,7 @@ Jump: [Request methods](#request-methods) / [Request options](#request-options) 
 }
 ```
 
-Jump: [Response object](#response)
+Jump to: [Response object](#response)
 
 ### Are you using Typescript / ESM ?
 
@@ -130,22 +130,16 @@ scraper.get<BitcoinGoogleResults>("https://www.google.com/search?q=bitcoin").the
 This library provides one method per supported HTTP method:
 
 ```typescript
-public get( 
-    url: string, 
-    options?: TOptions, 
-    extract?: TExtractor 
-): Promise<TScrapeResult>;
+public get( url: string, options?: TOptions, extract?: TExtractor ): Promise<TScrapeResult>;
 ```
 
+[Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L56)
+
 ```typescript
-public post( 
-    url: string, 
-    body?: any, 
-    bodyType?: "json" | "form", 
-    options?: TOptions, 
-    extract?: TExtractor 
-): Promise<TScrapeResult>;
+public post( url: string, body?: any, bodyType?: string, options?: TOptions, extract?: TExtractor ): Promise<TScrapeResult>;
 ```
+
+[Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L56)
 
 With the `scrape` method, You can also send up to **3 requests per call** if each of them points to different domain names.
 
@@ -153,7 +147,8 @@ With the `scrape` method, You can also send up to **3 requests per call** if eac
 public scrape( requests: TRequestWithExtractors[] ): Promise<TScrapeResult[]>;
 ```
 
-Jump: [Request options](#request-options) / [Extractors](#extractors) / [Response object](#response)
+[Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L31)
+Jump to: [Request options](#request-options) / [Extractors](#extractors) / [Response object](#response)
 
 ## Request: Options
 
