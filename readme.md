@@ -4,7 +4,9 @@
 
 ScrapingAPI is an All In One solution to **scrape webpage in Node.js** without headaches.
 
-> Current status: **Internal tests**. Not available for the public for now.
+**Current status: `Internal tests`. Not available for the public for now.**
+
+**If you're interested in this project, please let me know by [giving a star on Github](https://github.com/scrapingapi/scraper/stargazers).**
 
 ![How does ScraperAPI works](https://raw.githubusercontent.com/scrapingapi/scraper/main/scheme.jpg "How does ScraperAPI works")
 
