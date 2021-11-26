@@ -15,6 +15,7 @@ export { default as validate } from './validate';
 
 import {
     TRequestWithExtractors,
+    TRequestWithBody,
     TExtractor,
     TScrapeResult
 } from './types';
@@ -28,7 +29,7 @@ export default class Scraper {
 
     public constructor( public apiKey: string ) {}
 
-    public scrape<TData extends any = any>(requests: TRequestWithExtractors[]): Promise<TScrapeResult<TData>[]> {
+    public scrape<TData extends any = any>( requests: TRequestWithExtractors[] ): Promise<TScrapeResult<TData>[]> {
         return new Promise((resolve, reject) => request({
             method: 'POST',
             url: 'https://fast-and-undetectable-scraping-proxy.p.rapidapi.com',
@@ -59,6 +60,16 @@ export default class Scraper {
         extract?: TExtractor 
     ): Promise<TScrapeResult<TData>> {
         return this.scrape<TData>([{ method: 'GET', url, extract, ...options }]).then( res => res[0] );
+    }
+
+    public post<TData extends any = any>( 
+        url: string, 
+        body: TRequestWithBody["body"],
+        bodyType: TRequestWithBody["bodyType"],
+        options?: TOptions, 
+        extract?: TExtractor 
+    ): Promise<TScrapeResult<TData>> {
+        return this.scrape<TData>([{ method: 'POST', url, extract, body, bodyType, ...options }]).then( res => res[0] );
     }
 
 }

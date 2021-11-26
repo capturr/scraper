@@ -3,6 +3,7 @@
 ----------------------------------*/
 
 // Npm
+import getRootDomain from 'get-root-domain';
 import isURL from 'validator/lib/isURL';
 
 // Interval
@@ -17,64 +18,103 @@ type TObjetDonnees = {[k: string]: any};
 class BadRequest extends Error {}
 
 /*----------------------------------
+- CONFIG
+----------------------------------*/
+
+const reqPerCall = 3;
+
+/*----------------------------------
 - METHODS
 ----------------------------------*/
 
-export default (input: TObjetDonnees): TRequestWithExtractors => {
+export default (requests: TObjetDonnees): TRequestWithExtractors[] => {
 
     // TODO: Check remaining requests / minute
 
-    // Method
-    if (input.method !== undefined) {
-        if (!allowedMethods.includes(input.method))
+    // Type Check
+    if (!Array.isArray( requests ))
+        throw new BadRequest("requests must be an array. Provided: " + typeof requests);
+
+    // Requests number / call
+    const reqCount = requests.length;
+    if (reqCount === 0)
+        throw new BadRequest("You must provide at least one request.");
+    if (reqCount > reqPerCall)
+        throw new BadRequest("You can't send more than " + reqPerCall + " requests per call (" + reqCount + " given).");
+
+    // Check every request
+    const domains: {[domain: string]: true} = {};
+    for (let iReq = 0; iReq < reqCount; iReq++) {
+
+        const req = requests[iReq];
+
+        // Type
+        if (typeof req !== "object" || req === null)
+            throw new BadRequest("requests must be an array of requests object, but requests[" + iReq + "] is an " + typeof req);
+
+        // Method
+        if (req.method === undefined)
+            req.method = 'GET';
+        else if(!allowedMethods.includes(req.method))
             throw new BadRequest("Only the following HTTP methods are currently allowed: " + allowedMethods.join(', '));
-    } else
-        input.method = 'GET';
 
-    // URL
-    if (typeof input.url !== "string" || !isURL(input.url, {
-        require_protocol: true,
-        require_valid_protocol: true,
-        protocols: ['http', 'https'],
-        require_host: true,
-        require_port: false,
-        allow_protocol_relative_urls: false,
-    }))
-        throw new BadRequest("The url parameter must be a valid URL string: protocol (http or https) + domain + path (optional)");
+        // URL
+        if (typeof req.url !== "string" || !isURL(req.url, {
+            require_protocol: true,
+            require_valid_protocol: true,
+            protocols: ['http', 'https'],
+            require_host: true,
+            require_port: false,
+            allow_protocol_relative_urls: false,
+        }))
+            throw new BadRequest("The url parameter must be a valid URL string: protocol (http or https) + domain + path (optional)");
 
-    // Cookies
-    if (input.cookies !== undefined) {
+        // Unique domain
+        if (reqCount !== 1) {
+            
+            const domain = getRootDomain(req.url);
+            if (domains[domain] === true)
+                throw new BadRequest("When you send multiple requests in one call, each requets must point to different domain names. However, you're sending 2 requests to " + domain + ".");
 
-        // Type
-        if (typeof input.cookies !== 'string')
-            throw new BadRequest("The cookie parameter must be a string. Example: user=Bob; age=28;");
+            domains[domain] = true;
+
+        }
+
+        // Cookies
+        if (req.cookies !== undefined) {
+
+            // Type
+            if (typeof req.cookies !== 'string')
+                throw new BadRequest("The cookie parameter must be a string. Example: user=Bob; age=28;");
+
+        }
+
+        // body
+        if (req.body !== undefined) {
+
+            // Bodytype
+            if (req.bodyType === undefined)
+                throw new BadRequest("The bodyType parameter must be provided when the body parameter is specified.");
+            if (!bodyTypes.includes(req.bodyType))
+                throw new BadRequest("Invalid value for the bodyType parameter. Allowed values: " + bodyTypes.join(', '));
+
+            // Type
+            if (typeof req.body !== 'object' || req.body.constructor.name !== 'Object')
+                throw new BadRequest("The body parameter must be an object.");
+        }
+
+        if (req.extract !== undefined)
+            validateExtractors(req.extract, 'extract');
+
+        if (req.withBody !== undefined && typeof req.withBody !== "boolean")
+            throw new BadRequest(`The withBody parameter must be a boolean.`);
+
+        if (req.withHeaders !== undefined && typeof req.withHeaders !== "boolean")
+            throw new BadRequest(`The withHeaders parameter must be a boolean.`);
 
     }
 
-    // body
-    if (input.body !== undefined) {
-
-        // Bodytype
-        if (input.bodyType === undefined)
-            throw new BadRequest("The bodyType parameter must be provided when the body parameter is specified.");
-        if (!bodyTypes.includes(input.bodyType))
-            throw new BadRequest("Invalid value for the bodyType parameter. Allowed values: " + bodyTypes.join(', '));
-
-        // Type
-        if (typeof input.body !== 'object' || input.body.constructor.name !== 'Object')
-            throw new BadRequest("The body parameter must be an object.");
-    }
-
-    if (input.extract !== undefined)
-        validateExtractors(input.extract, 'extract');
-
-    if (input.withBody !== undefined && typeof input.withBody !== "boolean")
-        throw new BadRequest(`The withBody parameter must be a boolean.`);
-
-    if (input.withHeaders !== undefined && typeof input.withHeaders !== "boolean")
-        throw new BadRequest(`The withHeaders parameter must be a boolean.`);
-
-    return input as TRequestWithExtractors;
+    return requests as TRequestWithExtractors[];
     
 }
 
