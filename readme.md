@@ -55,7 +55,7 @@ scraper.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
         // We retrieve the link URL
         url: ["a[href]", "href", true, "url"],
         // And the title text
-        title: ["h3", "text", true, "title"]
+        title: ["h3", "text", true]
     }
 }).then((response) => {
 
@@ -264,7 +264,7 @@ Its a an array composed by at least three values:
 
 2. **Attribute**: The DOM element attribute that contains the value you want to extract. It includes:
     - [Native HTML attributes](https://www.w3schools.com/tags/ref_attributes.asp): `href`, `class`, `src`, etc ...
-    - `"text"`: Get the element content text
+    - `"text"`: Get the element content text. Leading, trailing and repeated whitespaces will be removed, ans HTML entities are decoded.
     - `"html"`: Get the element content html
 
 3. **Required**: A boolean that specify if this value is essential or not. 
@@ -272,19 +272,24 @@ Its a an array composed by at least three values:
 
 4. **Filters**: All the following values are filters that will be applied to the extracted value. Here are built-in filters:
     - URL
-    - Title
     - Price
 
 #### By Example
 
 ```typescript
-["h3", "text", true, "title"],
+[".priceText", "text", true, "price"],
 ```
 
-1. Select all the **`h3` elements**
-2. Get the **content text** of each of theses elements
+1. Select all elements having the `.priceText` class
+2. Get the **content text** of each of theses elements. Example:
+    ```json
+    "Current price: 9.99 $ (taxes included)"
+    ```
 3. This data is **required**, it should be present in the response
-4. Format the data by passing it to the **title filter**
+4. Process the data by passing it to the **price filter**. You will get:
+    ```json
+    { amount: 9.99, currency: "USD" }
+    ```
 
 ### Item extractor
 
@@ -319,7 +324,7 @@ The item extractor has 3 use cases. To illustrate them, I will take back the [Bi
         results: {
             $foreach: "h2:contains('Web results') + div", // This is our iterator
             url: ["a[href]", "href", true, "url"],
-            title: ["h3", "text", true, "title"]
+            title: ["h3", "text", true]
         }
     }
     ```
@@ -334,7 +339,7 @@ Consider the following extractor:
 ```typescript
 {
     $foreach: "article.product",
-    name: ["> h3", "text", true, "title"],
+    name: ["> h3", "text", true],
 }
 ```
 
@@ -456,12 +461,12 @@ scraper.get<Product[]>("http://example.com/products", {}, {
     
     $foreach: "#products > article.product",
 
-    name: ["> h3", "text", true, "title"],
+    name: ["> h3", "text", true],
     image: ["> img", "src", true, "url"],
     price: ["> .price", "text", true, "price"],
     tags: {
         $foreach: "> ul.tags > li",
-        text: ["this", "text", true, "title"]
+        text: ["this", "text", true]
     },
     description: ["> .details", "text", false]
 
