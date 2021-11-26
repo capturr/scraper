@@ -7,7 +7,10 @@ import getRootDomain from 'get-root-domain';
 import isURL from 'validator/lib/isURL';
 
 // Interval
-import { allowedMethods, bodyTypes, TRequestWithExtractors, TExtractor } from './types';
+import { 
+    /* const */allowedMethods, bodyTypes, dataFilters, 
+    /* types */TRequestWithExtractors, TExtractor 
+} from './types';
 
 /*----------------------------------
 - TYPES
@@ -29,8 +32,6 @@ const reqPerCall = 3;
 
 export default (requests: TObjetDonnees): TRequestWithExtractors[] => {
 
-    // TODO: Check remaining requests / minute
-
     // Type Check
     if (!Array.isArray( requests ))
         throw new BadRequest("requests must be an array. Provided: " + typeof requests);
@@ -45,7 +46,7 @@ export default (requests: TObjetDonnees): TRequestWithExtractors[] => {
     // Check every request
     const domains: {[domain: string]: true} = {};
     for (let iReq = 0; iReq < reqCount; iReq++) {
-
+        
         const req = requests[iReq];
 
         // Type
@@ -129,9 +130,15 @@ const validateExtractors = (extract: TObjetDonnees, path: string): TExtractor =>
             extract: ["h4", "text", true, "title"]
         */
 
-        if (extract.length < 3 || typeof extract[0] !== "string" || typeof extract[1] !== "string" || typeof extract[2] !== "boolean")
+        const [selector, attribute, required, ...filters] = extract;
+
+        if (typeof selector !== "string" || typeof attribute !== "string" || typeof required !== "boolean")
             throw new BadRequest("When the " + path + " option is an array, it must contain at least 3 values: "
                 + "CSS selector (string), attribute (string), required (boolean) and optionnaly filters (strings)");
+
+        for (const filter of filters)
+            if (!dataFilters.includes( filter ))
+                throw new BadRequest("The filter \"" + filter + "\" you gave in " + path + " does not exists. Possible filters: " + dataFilters.join(', '));
 
     } else {
 

@@ -4,6 +4,7 @@
 
 export const allowedMethods = ["GET", "POST"];
 export const bodyTypes = ["form", "json"];
+export const dataFilters = ["url", 'price'];
 
 export type TRequestWithExtractors = TRequest & {
     extract?: TExtractor,
@@ -36,7 +37,7 @@ export type TValueExtractor = [
     selector: "this" | string,
     attribute: "text" | "html" | string,
     required: boolean,
-    ...filters: string[]
+    ...filters: (typeof dataFilters[number])[]
 ]
 
 export type TItemsExtractor = (
