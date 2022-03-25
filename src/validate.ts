@@ -9,7 +9,7 @@ import isURL from 'validator/lib/isURL';
 // Interval
 import { 
     /* const */allowedMethods, bodyTypes, dataFilters, 
-    /* types */TRequestWithExtractors, TExtractor 
+    /* types */TRequestWithExtractors, TExtractor , TValueExtractor, ValueExtractor
 } from './types';
 
 /*----------------------------------
@@ -30,7 +30,7 @@ const reqPerCall = 3;
 - METHODS
 ----------------------------------*/
 
-export default (requests: TObjetDonnees): TRequestWithExtractors[] => {
+export default (requests: TRequestWithExtractors | TObjetDonnees): TRequestWithExtractors[] => {
 
     // Type Check
     if (!Array.isArray( requests ))
@@ -105,7 +105,7 @@ export default (requests: TObjetDonnees): TRequestWithExtractors[] => {
         }
 
         if (req.extract !== undefined)
-            validateExtractors(req.extract, 'extract');
+            req.extract = validateExtractors(req.extract, 'extract');
 
         if (req.withBody !== undefined && typeof req.withBody !== "boolean")
             throw new BadRequest(`The withBody parameter must be a boolean.`);
@@ -119,22 +119,34 @@ export default (requests: TObjetDonnees): TRequestWithExtractors[] => {
     
 }
 
-const validateExtractors = (extract: TObjetDonnees, path: string): TExtractor => {
+export const isValueExtractor = (extract: TValueExtractor | TObjetDonnees): extract is TValueExtractor => 
+    ('select' in extract) && ('attr' in extract)
+
+const validateExtractors = (extract: ValueExtractor | TValueExtractor | TObjetDonnees, path: string): TExtractor => {
 
     if (!extract || typeof extract !== 'object')
         throw new BadRequest("The " + path + " option must be an object or an array (" + typeof extract + " given).");
+        
+    if (extract instanceof ValueExtractor)
+        extract = extract.options;
 
-    if (Array.isArray( extract )) {
+    // The two required options in TValueExtractor
+    if (isValueExtractor(extract)) {
 
         /*
-            extract: ["h4", "text", true, "title"]
+            extract: { 
+                select: "h4", 
+                attr: "text", 
+                required: true, 
+                filters: ["title"] 
+            }
         */
 
-        const [selector, attribute, required, ...filters] = extract;
+        const { select, attr, required, filters } = extract;
 
-        if (typeof selector !== "string" || typeof attribute !== "string" || typeof required !== "boolean")
+        if (typeof select !== "string" || typeof attr !== "string" || typeof required !== "boolean")
             throw new BadRequest("When the " + path + " option is an array, it must contain at least 3 values: "
-                + "CSS selector (string), attribute (string), required (boolean) and optionnaly filters (strings)");
+                + "CSS select (string), attribute (string), required (boolean) and optionnaly filters (strings)");
 
         for (const filter of filters)
             if (!dataFilters.includes( filter ))
@@ -153,17 +165,15 @@ const validateExtractors = (extract: TObjetDonnees, path: string): TExtractor =>
         if (Object.keys(extract).length === 0)
             throw new BadRequest("The " + path + " parameter must contain at least one entry.");
 
-        // @ts-ignore: Property '$foreach' does not exist on type 'TExtractor'
-        const { $foreach, ...toExtract } = extract as TExtractor;
-
-        // Foreach
-        if ($foreach !== undefined && typeof $foreach !== "string")
-            throw new BadRequest("When specified, the " + path + ".$foreach parameter must be a CSS selector string.");
-
         // For each extractor
-        for (const name in toExtract) {
+        for (const name in extract) {
 
-            validateExtractors(toExtract[name], path + '.' + name);
+            // Foreach
+            if (name !== '$foreach')
+                extract[name] = validateExtractors(extract[name], path + '.' + name);
+            else if (typeof extract[name] !== "string")
+                throw new BadRequest("When specified, the " + path + ".$foreach parameter must be a CSS selector string.");
+
 
         }
     }

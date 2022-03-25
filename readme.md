@@ -1,14 +1,30 @@
-# Scraping API Official Library
+<p align="center">
+    <a href="https://scrapingapi.io" target="_blank">
+        <img src="https://raw.githubusercontent.com/scrapingapi/scraper/main/logo_text.png" alt="ScrapingAPI Logo" />
+    </a>
+</p>
 
-[![npm](https://img.shields.io/npm/v/scrapingapi)](https://www.npmjs.com/package/scrapingapi)
+<h1 align="center">One API to scrape all the web</h1>
 
-ScrapingAPI is an All In One solution to **scrape webpage in Node.js** without headaches.
+<p align="center">
+    Easily scrape data from any website, without taking care of captchas and bot detection mecanisms.
+</p>
 
-**Current status: `Internal tests`. Not available for the public for now.**
 
-**If you're interested in this project, please let me know by [giving a star on Github](https://github.com/scrapingapi/scraper/stargazers).**
+<div align="center">
+ 
+![version](https://img.shields.io/github/tag/scrapingapi/scraper)
+[![npm](https://img.shields.io/npm/dm/scrapingapi)](https://www.npmjs.com/package/scrapingapi)
+[![discord](https://img.shields.io/discord/956821594372714546?label=Discord)](https://discord.gg/m7KWXcBaBu)
 
-![How does ScraperAPI works](https://raw.githubusercontent.com/scrapingapi/scraper/main/scheme.jpg "How does ScraperAPI works")
+</div>
+
+<p align="center">
+    <a href="http://www.scrapingapi.io"><b>Website</b></a> •
+    <a href="https://discord.gg/m7KWXcBaBu"><b>Discord</b></a>
+</p>  
+
+<p align="center"><img src="https://raw.githubusercontent.com/scrapingapi/scraper/main/sample_code.jpg" alt="How does ScraperAPI works" width="1000px" /></p>
 
 ## Features
 
@@ -29,10 +45,7 @@ ScrapingAPI is an All In One solution to **scrape webpage in Node.js** without h
     npm install --save scrapingapi
     ```
 
-2. Get your **API key**
-    Simply by [creating an account](https://rapidapi.com/auth/sign-up?referral=/dopamyn-network-dopamyn-network-default/api/fast-and-undetectable-scraping-proxy/) on RapidAPI.
-    
-    [![Get Your API Key](https://files.readme.io/7002e7f-c563a12-rapidapi-badge-dark.png "Get Your API Key")](https://rapidapi.com/auth/sign-up?referral=/dopamyn-network-dopamyn-network-default/api/fast-and-undetectable-scraping-proxy/)
+2. Create your **API Key** on [scrapingapi.io](https://scrapingapi.io/?utm_source=github&utm_medium=readme)
 
 3. **Enjoy** scraping without headaches !
 
@@ -43,23 +56,22 @@ ScrapingAPI is an All In One solution to **scrape webpage in Node.js** without h
 Here is an example of scraping **current Bitcoin price + search results** from Google Search.
 
 ```javascript
-const scraper = require("scrapingapi")(API_KEY);
+import Scraper, { $ } from '../src';
+const page = new Scraper('API_KEY');
 
-scraper.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
+page.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
     // Extract the current bitcoin price                  
-    price: ["#search .obcontainer .card-section > div:eq(1)", "text", true, "price"],
-    // Search results
-    results: {
-        // For each Google search result
-        $foreach: "h2:contains('Web results') + div",
-        // We retrieve the link URL
-        url: ["a[href]", "href", true, "url"],
-        // And the title text
-        title: ["h3", "text", true]
-    }
-}).then((response) => {
+    price: $("#search .obcontainer .card-section > div:eq(1)").filter("price"),
+    // For each Google search result
+    results: $("h2:contains('Web results') + div").each({
+        // We retrieve the URL
+        url: $("a[href]").attr("href").filter("url"),
+        // ... And the title text
+        title: $("h3")
+    })
+}).then( data => {
 
-    console.log("Here are the results:", response );
+    console.log("Here are the results:", data);
 
 });
 ```
@@ -78,7 +90,7 @@ The `Scraper.get` method sends a **GET request** to the provided URL, and return
     "status": 200,
     "data": {
         "price": {
-            "amount": 50655.51,
+            "amount": 49805.02,
             "currency": "EUR"
         },
         "results": [{
@@ -288,7 +300,7 @@ Its a an array composed by at least three values:
 3. This data is **required**, it should be present in the response
 4. Process the data by passing it to the **price filter**. You will get:
     ```json
-    { amount: 9.99, currency: "USD" }
+    { "amount": 9.99, "currency": "USD" }
     ```
 
 ### Item extractor

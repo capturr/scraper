@@ -17,10 +17,14 @@ import {
     TRequestWithExtractors,
     TRequestWithBody,
     TExtractor,
-    TScrapeResult
+    TScrapeResult,
+
+    ValueExtractor
 } from './types';
 
 type TOptions = Omit<TRequestWithExtractors, 'extract' | 'url' | 'method'>;
+
+const local = true;
 
 /*----------------------------------
 - SCRAPER
@@ -30,13 +34,16 @@ export default class Scraper {
     public constructor( public apiKey: string ) {}
 
     public scrape<TData extends any = any>( requests: TRequestWithExtractors[] ): Promise<TScrapeResult<TData>[]> {
+
+        //console.dir(validate(requests), { depth: null });
+        
         return new Promise((resolve, reject) => request({
             method: 'POST',
-            url: 'https://fast-and-undetectable-scraping-proxy.p.rapidapi.com',
+            url: local ? 'http://localhost:3011/v0' : 'https://scrapingapi.io/v0',
             headers: {
                 'content-type': 'application/json',
-                'x-rapidapi-host': 'fast-and-undetectable-scraping-proxy.p.rapidapi.com',
-                'x-rapidapi-key': this.apiKey
+                'accepted': 'application/json',
+                'Authorization': this.apiKey,
             },
             body: {
                 requests: validate(requests)
@@ -57,7 +64,7 @@ export default class Scraper {
     public get<TData extends any = any>( 
         url: string, 
         options?: TOptions, 
-        extract?: TExtractor 
+        extract?: TExtractor | ValueExtractor
     ): Promise<TScrapeResult<TData>> {
         return this.scrape<TData>([{ method: 'GET', url, extract, ...options }]).then( res => res[0] );
     }
@@ -67,11 +74,16 @@ export default class Scraper {
         body: TRequestWithBody["body"],
         bodyType: TRequestWithBody["bodyType"],
         options?: TOptions, 
-        extract?: TExtractor 
+        extract?: TExtractor | ValueExtractor
     ): Promise<TScrapeResult<TData>> {
         return this.scrape<TData>([{ method: 'POST', url, extract, body, bodyType, ...options }]).then( res => res[0] );
     }
 
 }
 
-module.exports = (apiKey: string) => new Scraper(apiKey);
+export const $ = (selector: string) => new ValueExtractor(selector)
+
+/*module.exports = (apiKey: string) => ({
+    page: new Scraper(apiKey),
+    $: $
+})*/
