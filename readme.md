@@ -24,7 +24,7 @@
     <a href="https://discord.gg/m7KWXcBaBu"><b>Discord</b></a>
 </p>  
 
-<p align="center"><img src="https://raw.githubusercontent.com/scrapingapi/scraper/main/sample_code.jpg" alt="How does ScraperAPI works" width="1000px" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/scrapingapi/scraper/main/sample_code.png" alt="How does ScraperAPI works" width="1000px" /></p>
 
 ## Features
 
