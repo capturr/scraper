@@ -103,6 +103,10 @@ export class ValueExtractor {
 /*----------------------------------
 - RESPONSE
 ----------------------------------*/
+export type TExtractedPrice = {
+    amount: number,
+    currency: string
+}
 
 export type TScrapeResult<TData extends any = any> = {
     url: string,

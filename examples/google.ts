@@ -1,17 +1,15 @@
-import Scraper, { $ } from '../src';
+import Scraper, { $, TExtractedPrice } from '../src';
 const page = new Scraper('API_KEY');
 
 type TGoogleResults = {
-    price: { 
-        amount: number, 
-        currency: string 
-    },
+    price: TExtractedPrice,
     results: {
         url: string,
         title: string
     }[]
 }
 
+// Scrape Google search results for "bitcoin"
 page.get<TGoogleResults>("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
     // Extract the current bitcoin price                  
     price: $("#search .obcontainer .card-section > div:eq(1)").filter("price"),

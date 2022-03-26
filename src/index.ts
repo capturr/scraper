@@ -22,6 +22,8 @@ import {
     ValueExtractor
 } from './types';
 
+export type { TExtractedPrice } from './types';
+
 type TOptions = Omit<TRequestWithExtractors, 'extract' | 'url' | 'method'>;
 
 const local = true;

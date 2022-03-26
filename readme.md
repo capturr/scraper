@@ -1,13 +1,13 @@
 <p align="center">
-    <a href="https://scrapingapi.io" target="_blank">
-        <img src="https://raw.githubusercontent.com/scrapingapi/scraper/main/logo_text.png" alt="ScrapingAPI Logo" />
+    <a href="https://scrapingapi.io/?utm_source=github&utm_medium=readme&utm_campaign=logo" target="_blank">
+        <img src="media/logo_text.png" alt="ScrapingAPI Logo" />
     </a>
 </p>
 
-<h1 align="center">One API to scrape all the web</h1>
+<h1 align="center"><b><u>One</u> powerful API to scrape <u>all</u> the web</b></h1>
 
 <p align="center">
-    Easily scrape data from any website, without taking care of captchas and bot detection mecanisms.
+    Easily scrape data from any website, without worrying about captchas and bot detection mecanisms.
 </p>
 
 
@@ -16,49 +16,77 @@
 ![version](https://img.shields.io/github/tag/scrapingapi/scraper)
 [![npm](https://img.shields.io/npm/dm/scrapingapi)](https://www.npmjs.com/package/scrapingapi)
 [![discord](https://img.shields.io/discord/956821594372714546?label=Discord)](https://discord.gg/m7KWXcBaBu)
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<a target="_blank" href="https://twitter.com/intent/tweet?url=https://bit.ly/3iAvAmP&text=Easily%20#scrape%20data%20from%20any%20website,%20without%20worrying%20about%20#captchas%20and%20#bot%20detection%20mecanisms.">
+    <img height="26px" src="https://simplesharebuttons.com/images/somacro/twitter.png"
+        alt="Tweet"></a>
+<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&url=https://bit.ly/3qC2IyV">
+    <img height="26px" src="https://simplesharebuttons.com/images/somacro/linkedin.png"
+        alt="Share on LinkedIn"></a>
+<a target="_blank" href="https://news.ycombinator.com/submitlink?u=https://bit.ly/3qBkLFe&t=Easily%20scrape%20data%20from%20any%20website%2C%20without%20taking%20care%20of%20captchas%20and%20bot%20detection%20mecanisms.">
+    <img height="26px" src="media/ycombinator.png"
+        alt="Share on Hacker News"></a>
 
 </div>
 
 <p align="center">
-    <a href="http://www.scrapingapi.io"><b>Website</b></a> •
-    <a href="https://discord.gg/m7KWXcBaBu"><b>Discord</b></a>
+    <a href="https://scrapingapi.io/?utm_source=github&utm_medium=readme&utm_campaign=links"><b>Website</b></a> •
+    <a href="https://discord.gg/m7KWXcBaBu"><b>Discord</b></a> • 
+    <a href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give a Star</b></a>
 </p>  
 
-<p align="center"><img src="https://raw.githubusercontent.com/scrapingapi/scraper/main/sample_code.png" alt="How does ScraperAPI works" width="1000px" /></p>
+<p align="center">
+    <a target="_blank" href="#simple-usage-example">
+        <img src="media/sample_code.png" alt="How does ScraperAPI works" width="1000px" />
+    </a>
+</p>
 
 ## Features
 
-* Fully automated **proxy rotation** with HQ **residential IPs**. No captcha, and you will never be detected as a bot or proxy user
-* Integrated [**data extraction**](#extractors) with CSS / jQuery selectors, **filters** and **iterators**
+* No captcha, no bot detection. Websites will see you as a human.
+* Integrated [**data extraction**](#extractors):
+    * Easily extract data with CSS / jQuery-like selectors
+    * Use filters to get ultra-clean data: url, price, ...
+    * Iterate through items (ex: search results, products list, articles, ...)
 * **Bulk requests**: Up to 3 per call
-* Allowed to send json / form-encoded body and cookies
+* Post json / form-encoded body
+* Set request device, headers and cookies
 * Returns **response body, headers, final URL & status code**
-* Supports redirects 
-* Coming Soon: Presets for popular websites
+* Typescript typings
+
+-----------
+
+<p align="center">
+    Do you like this project ? Please let me know,
+    <a href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give a Star :)</b></a>
+</p>
 
 ------------
 
 ## Get started in 5 minutes chrono
 
-1. **Install** the package from NPM
+1. **Install** the package
     ```console
     npm install --save scrapingapi
     ```
+    If you're a Yarn guy:
+    ```console
+    yarn add --save scrapingapi
+    ```
 
-2. Create your **API Key** on [scrapingapi.io](https://scrapingapi.io/?utm_source=github&utm_medium=readme)
+2. Create your free **API Key** on [scrapingapi.io](https://scrapingapi.io/?utm_source=github&utm_medium=readme&utm_campaign=getstarted)
 
-3. **Enjoy** scraping without headaches !
-
-💡 **TIP**: You can test your requests with [Insomnia](https://github.com/Kong/insomnia) (Open Source + Cross Platform)
+3. Make your first request (example below 👇)
 
 ## Simple Usage Example
 
 Here is an example of scraping **current Bitcoin price + search results** from Google Search.
 
 ```javascript
-import Scraper, { $ } from '../src';
+import Scraper, { $ } from 'scrapingapi';
 const page = new Scraper('API_KEY');
 
+// Scrape Google search results for "bitcoin"
 page.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
     // Extract the current bitcoin price                  
     price: $("#search .obcontainer .card-section > div:eq(1)").filter("price"),
@@ -76,13 +104,11 @@ page.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
 });
 ```
 
-The `Scraper.get` method sends a **GET request** to the provided URL, and returns a `Promise` with a `TScrapeResult` object.
-
-🚀 Jump to: [Request methods](#request-methods) / [Request options](#request-options) / [Response object](#response)
+The `Scraper.get` method sends a **GET request** to the provided URL, and automatically extract the data you asked: the price and the results.
 
 ![Google Search Example](https://raw.githubusercontent.com/scrapingapi/scraper/main/google-dom.jpg "Google Search Example")
 
-### You will get the following result
+In the data parameter, you will get a [TScrapeResult](src/types.ts#L107) object, containing the scraping results.
 
 ```json
 {
@@ -110,31 +136,17 @@ The `Scraper.get` method sends a **GET request** to the provided URL, and return
 }
 ```
 
-🚀 Jump to: [Response object](#response)
+### Use Typescript
 
-### Are you using Typescript / ESM ?
-
-**ESM** imports are also supported.
-If you're using **Typescript**, it's advised to use `import` instead of `require` in order to benefit from type checkings.
-
-```javascript
-import Scraper from 'scrapingapi';
-const scraper = new Scraper(API_KEY);
-```
-
-### Extracted data typing
-
-In addition of basic type checkings, you can **define the type** of the scraped data.
+Take advantage of the power of typescript by typing your response data:
 
 ```typescript
-...
+import Scraper, { $, TExtractedPrice } from '../src';
+const page = new Scraper('API_KEY');
 
 type BitcoinGoogleResults = {
     // Metadata generated by the price filter
-    price: {
-        amount: number, 
-        currency: string 
-    },
+    price: TExtractedPrice,
     // An array containing an informations object for each Google search result
     results: {
         url: string,
@@ -142,107 +154,143 @@ type BitcoinGoogleResults = {
     }[]
 }
 
-scraper.get<BitcoinGoogleResults>("https://www.google.com/search?q=bitcoin").then( ... );
+page.get<BitcoinGoogleResults>("https://www.google.com/search?q=bitcoin").then( ... );
 ```
 
 ------------------
 
-# Documentation
+# Documentation / Guide
 
-* [Request](#request)
-    - [Methods](#request-methods)
-    - [Options](#request-options)
-* [Extractors](#extractors)
-    - [Value Extractor](#value-extractor)
-    - [Item Extractor](#item-extractor)
-* [Response](#response)
-* [Example](#another-example)
+Let's consider we want to scrape an Amazon product page to retrieve the following info:
 
-## Request
+* Product info
+    * Title
+    * Current price
+    * Image URL
+* Reviews
+    * Average rating
+    * List of reviews
 
-### Request Methods
+Ready ? Let's start step by step:
 
-This library provides one method per supported HTTP method:
+1. [Make the **Request**](#request)
+    - [**Method**: GET, POST](#request-methods)
+    - [**Options**: device, cookies, body, withBody, withHeaders](#request-options)
+2. [**Extract** your data](#extractors)
+    - [Simple values](#value-extractor)
+    - [Filters a Validators](#item-extractor)
+    - [Optional values](#item-extractor)
+3. [**Iterate** through lists](#response)
+4. [Handle the **Response**](#response)
+5. [Another **Example**](#another-example)
 
-```typescript
-public get( url: string, options?: TOptions, extract?: TExtractor ): Promise<TScrapeResult>;
-```
+## 1. Make the Request
 
-[Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L56)
+### 1.1 Request Methods
 
-```typescript
-public post( url: string, body?: any, bodyType?: string, options?: TOptions, extract?: TExtractor ): Promise<TScrapeResult>;
-```
+This SDK provides one method per supported HTTP method:
 
-[Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L56)
+* GET: [See the definition](src/index.ts#66)
+    ```typescript 
+    page.get( url, options, extractor );
+    ```
+* POST: [See the definition](src/index.ts#74)
+    ```typescript
+    page.post( url, body, bodyType, options, extractor );
+    ```
+* Bulk requests: 
+    With the `scrape` method, You can also send up to **3 requests per call** if each of them points to different domain names.
+    [See the definition](src/index.ts#38)
+    ```typescript
+    page.scrape( requests );
+    ```
 
-With the `scrape` method, You can also send up to **3 requests per call** if each of them points to different domain names.
+<details><summary>Show Example</summary>
+<p>
 
-```typescript
-public scrape( requests: TRequestWithExtractors[] ): Promise<TScrapeResult[]>;
-```
-
-[Go to code](https://github.com/scrapingapi/scraper/blob/main/src/index.ts#L31)
-
-🚀 Jump to: [Request options](#request-options) / [Extractors](#extractors) / [Response object](#response)
-
-### Request Options
-
-Each request options is represented by the `TRequestWithExtractors` type (the following definition is a simplified version):
-
-```typescript
-type TRequestWithExtractors = {
-    
-    // The URL address you want to sent the request to
-    url: string,
-    // The HTTP method. Default value: "GET"
-    method?: HttpMethod,
-    // The cookie string you want to pass to the request.
-    // Example: "sessionId=34; userId=87;"
-    cookies?: string,
-
-    // The data to send with the request. Must be combined with bodyType.
-    // Example: { "name": "bob", "age": 25 }
-    body: { [key: string]: any },
-    bodyType: typeof bodyTypes[number],
-
-    // Extractor object that define what data you want to extract from the webpage
-    extract?: TExtractor,
-    // true if you want to retrieve the response body string
-    withBody?: boolean,
-    // true if you want to retrieve the response headers
-    withHeaders?: boolean,
-}
-```
-
-💡 See: [Allowed HTTP Methods](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L5) / [Allowed Body Types](https://github.com/scrapingapi/scraper/blob/main/src/types.ts#L6) 
-
-## Extractors
-
-As you've seen before, besides of providing an undetectable scraping proxy, the scrapingapi library also allows you to **extract and filter data** from webpages with the optional `extract` option.
-
-There are two types of extractors that you can combine with each other.
+For our example, we only need to make a get request.
 
 ```typescript
-type TExtractor = TValueExtractor | TItemsExtractor;
+page.get( "https://www.amazon.com/dp/B08L76BSZ5", <options>, <extractors> );
 ```
 
-### Value extractor
+</p>
+</details>
 
-As indicated by his name, the value extractor gives you the tools so you can easily extract data from a webpage.
+### 1.2 Request Options
+
+```typescript 
+page.get( url, options, extractor );
+               ^^^^^^^
+```
+
+Depending on your needs, you can change some settings for your request:
+
+* **device** (string): Which user-agent do you want to use for your request: `desktop`, `mobile` or `tablet`
+    ```json
+    { "device": "mobile" }
+    ```
+* **cookies** (string): The cookie string you want to pass to the request. Example:
+    ```json
+    { "cookies": "sessionId=34; userId=87;" }
+    ```
+* **withBody** (boolean): If you want to get the page HTML in the response. Default: `false`
+    ```json
+    { withBody: true }
+    ```
+* **withHeaders** (boolean): If you want to retrieve the response headers. Default: `false`
+    ```json
+    { withHeaders: true }
+    ```
+
+For POST requests only:
+
+* **body** (object): The data to send in your POST request. Must be combined with bodyType.
+    ```json
+    { "body": { "name": "bob", "age": 25 } }
+    ```
+* **bodyType** (string): In which format do you want to POST your data: `form` or `json`
+    ```json
+    { "bodyType": "form" }
+    ```
+
+<details><summary>Show the Example</summary>
+<p>
+
+Here, we will simulate a mobile device, because the mobile version of Amazon is easier to scrape given that there are less elements on the page. We will also retrieve the response headers.
 
 ```typescript
-type TValueExtractor = [
-    selector: "this" | string, 
-    attribute: "text" | "html" | string,
-    required: boolean,
-    ...filters: string[]
-]
+page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders: true }, <extractors>);
 ```
 
-Its a an array composed by at least three values:
+</p>
+</details>
 
-1. **Selector**: A [CSS](https://www.w3schools.com/cssref/css_selectors.asp) / [jQuery-like selector](https://www.w3schools.com/jquery/jquery_ref_selectors.asp) to match the DOM element you are interested in. By example:
+## 2. Extract your data
+
+We're now at the most interesting part: we'll how to extract, filter and iterate data.
+
+```typescript 
+page.get( url, options, extractor );
+                        ^^^^^^^^^
+```
+
+### 2.1 Extract a value
+
+Let's start with the basics: extract a single information from the webpage.
+
+To retrieve a value, we will use the `$` function. If you've already used jQuery, it should look a bit familiar :)
+
+```typescript
+$( <selector> ).attr( <attribute> )
+```
+
+As you can see, we need two info:
+
+1. The **Selector** of the element which contains the information you want to extract.
+    <details><summary>Show examples of selectors</summary>
+    <p>
+
     - `h3`: Simply matches all `h3` elements
         - Matches: 
             ```html
@@ -273,131 +321,267 @@ Its a an array composed by at least three values:
             <p>is maybe not</p>
             <div>well configured</div>
             ```
+    Don't hesitate to go deeper by checking theses references:
+    * [CSS selectors](https://www.w3schools.com/cssref/css_selectors.asp)
+    * [jQuery selectors](https://www.w3schools.com/jquery/jquery_ref_selectors.asp) 
 
-2. **Attribute**: The DOM element attribute that contains the value you want to extract. It includes:
+    </p>
+    </details> 
+
+2. The **Attribute** of the element in which the data is defined. It includes:
     - [Native HTML attributes](https://www.w3schools.com/tags/ref_attributes.asp): `href`, `class`, `src`, etc ...
     - `"text"`: Get the element content text. Leading, trailing and repeated whitespaces will be removed, ans HTML entities are decoded.
     - `"html"`: Get the element content html
 
-3. **Required**: A boolean that specify if this value is essential or not. 
-    If no value has been found and if required is true, then the whole item will not be included in the response.
+💡 **Tip**: If you just want to extract the context text of the element, calling `.attr( <attribute> )` is not required.
+It means that you could use `$( <selector> )` instead of `$( <selector> ).attr( <attribute> )`
 
-4. **Filters**: All the following values are filters that will be applied to the extracted value. Here are built-in filters:
-    - URL
-    - Price
+<details><summary>Show the Example</summary>
+<p>
 
-#### By Example
+Let's start by extracting the product info:
+
+* Title
+* Current price
+* Image URL
+* Rating
 
 ```typescript
-[".priceText", "text", true, "price"],
+page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders: true }, {
+
+    title: $("#title"),
+    price: $("#corePrice_feature_div .a-offscreen:first"),
+    image: $("#main-image").attr("src"),
+    reviews: {
+        rating: $(".cr-widget-Acr [data-hook='average-stars-rating-text']")
+    }
+
+});
 ```
 
-1. Select all elements having the `.priceText` class
-2. Get the **content text** of each of theses elements. Example:
-    ```json
-    "Current price: 9.99 $ (taxes included)"
-    ```
-3. This data is **required**, it should be present in the response
-4. Process the data by passing it to the **price filter**. You will get:
+Pretty easy, isn't it ? 🙂
+With this code, you will get the following data:
+
+```json
+{
+    "title": "sportbull Unisex 3D Printed Graphics Novelty Casual Short Sleeve T-Shirts Tees",
+    "price": "$9.99",
+    "image": "https://m.media-amazon.com/images/I/71c3pFtZywL._AC_AC_SY350_QL65_.jpg",
+    "reviews": {
+        "rating": "4.4 out of 5"
+    }
+}
+```
+
+That's cool, but here we have two problems:
+
+* The price is a string, and we need to parse it if we want to separate the price amount from the currency. 
+    In a perfect world, we could simply make a 
+    ```typescript
+    const amount = parseFloat( data.price.substring(1) );
+    ``` 
+    to get the amount.
+    Yes, but depending on any factors, he price format could vary in `9.99 USD`, `9.99 dollars incl. taxes`, `$9.99 USD free shipping`, etc ... 
+    In addition, what warranties you that the price element systematically contains a price ? For some reaosns, we could have another random value.
+    We want to build something strong, so we need to solve this issue.
+* Same issue with the image URL, we need to filter and validate it to be sure we have an URL in the correct form.
+
+That's a great transition to see how you can filter the data you've extracted.
+
+
+</p>
+</details>
+
+## 2.2. Filter the data
+
+To ensure that the data we've extracted matches with what we're expecting, we can specify filters for each selector:
+
+```typescript
+$( <selector> ).attr( <attribute> ).filter( <filter name> )
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+```
+
+For the moment, we only support two filters:
+
+* **url**: Checks if the value is an URL. If the URL is relative, it will be transformed into an absolute URL.
+* **price**: Powered by the [price-extract](https://github.com/scrapingapi/price-extract) package, this filter ensures that the value express a price, autodetect the currency ISO code, and separate the amount from the currency.
+    It will give you an object with the price info:
     ```json
     { "amount": 9.99, "currency": "USD" }
     ```
 
-### Item extractor
+💡 **If you want I add another filter, please don't hesitate to share your purposal by [submitting a an issue](https://github.com/scrapingapi/price-extract/issues).** Thank you !
+
+<details><summary>Show the Example</summary>
+<p>
+
+To come back on our Amazon example, we will simply add filters on the `price` and `image` data:
 
 ```typescript
-type TItemsExtractor = (
-    { $foreach?: string }
-    &
-    { [name: string]: TExtractor }
-)
+page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders: true }, {
+
+    title: $("#title"),
+    price: $("#corePrice_feature_div .a-offscreen:first").filter("price"),
+                                                         ^^^^^^^^^^^^^^^^
+    image: $("#main-image").attr("src").filter("url")
+                                       ^^^^^^^^^^^^^^,
+    reviews: {
+        rating: $(".cr-widget-Acr [data-hook='average-stars-rating-text']")
+    }
+});
 ```
 
-The item extractor has 3 use cases. To illustrate them, I will take back the [Bitcoin Google Search example](#simple-usage-example).
+By running this code, you will get the following data:
 
-* **Give a name** to every value you've extracted
-    ```typescript
-    {
-        price: ["#search .obcontainer .card-section > div:eq(1)", "text", true, "price"],
-    }
-    ```
-* **Define a structure** for your data (you can nest multiple item extractors)
-    ```typescript
-    {
-        informations: {
-            price: ["#search .obcontainer .card-section > div:eq(1)", "text", true, "price"],
-        }               
-    }
-    ```
-* **Iterate** a DOM elements list to return an array correspond to each element (see the `$foreach` instruction)
-    ```typescript
-    {              
-        price: ["#search .obcontainer .card-section > div:eq(1)", "text", true, "price"],
-        results: {
-            $foreach: "h2:contains('Web results') + div", // This is our iterator
-            url: ["a[href]", "href", true, "url"],
-            title: ["h3", "text", true]
-        }
-    }
-    ```
-
-#### The $foreach instruction
-
-The `$foreach` instruction allows you to iterate all items that matches a selector.
-
-**Important**: Please note that all the selectors that follows - directly or indirectly - a `$foreach` instruction will be relative to the matched items. 
-Consider the following extractor:
-
-```typescript
+```json
 {
-    $foreach: "article.product",
-    name: ["> h3", "text", true],
+    "title": "sportbull Unisex 3D Printed Graphics Novelty Casual Short Sleeve T-Shirts Tees",
+    "price": { "amount": 9.99, "currency": "USD" },
+    "image": "https://m.media-amazon.com/images/I/71c3pFtZywL._AC_AC_SY350_QL65_.jpg",
+    "reviews": {
+        "rating": "4.4 out of 5"
+    }
 }
 ```
 
-It goal is to extract the title of every `article` element having the product class.
+We get clean price data, and we're certain that `image` is an URL.
 
-Since we've iterated across items via a `$foreach`, the `> h3` selector will be executed inside every `article.product` element.
+</p>
+</details>
 
-In other words, the `name` data will match every `h3` element that is a direct child of every `article.product` element.
+## 2.3. Optional values
 
-## Response
+By default, all values you will select are required. That means we absolutly want this value to be present in the item, otherwhisee, this item will be excluded from the response.
 
-For each request you send, a `TScrapeResult` object will be returned, containing the informations you've requested in the options.
+But you can of course make a value optional:
 
 ```typescript
-type TScrapeResult<TData extends any = any> = {
+$( <selector> ).attr( <attribute> ).optional()
+                                   ^^^^^^^^^^^
+```
 
-    // The final response URL. Useful if the requested webpage send redirections.
-    url: string,
+When a value is optional and it has not been found on the scraped page, you will get an undefined value.
 
-    // The response HTTP status code. 200 if it is ok.
-    status: number,
-    
-    // When you set the `withHeaders` option to true, an object containing the webpage response headers will be returned.
-    headers?: { [key: string]: string },
+Here are the reasons why a value could not be found:
 
-    // When you set the `withBody` option to true, you will get the HTML of the requested webpage.
-    body?: string,
+* The selector do not matches with any element in the page
+* The attribute you want to retrieve do not exists
+* The value is empty
+* The filter has rejected the value
 
-    // When you specify extractors with the `extract` option, data will contain the extracted data.
-    data?: TData
+<details><summary>Show the Example</summary>
+<p>
+
+Let's consider that the average rating is not necessarly present on the page.
+Even if we're not able to get this info, we still want to retireve all the other values.
+So, we have to make the `reviews.rating` data optional.
+
+```typescript
+page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders: true }, {
+
+    title: $("#title"),
+    price: $("#corePrice_feature_div .a-offscreen:first").filter("price"),
+    image: $("#main-image").attr("src").filter("url"),
+    reviews: {
+        rating: $(".cr-widget-Acr [data-hook='average-stars-rating-text']").optional()
+                                                                           ^^^^^^^^^^^
+    }
+
+});
+```
+
+If `reviews.rating` has not been found, you will get the following data:
+
+```json
+{
+    "title": "sportbull Unisex 3D Printed Graphics Novelty Casual Short Sleeve T-Shirts Tees",
+    "price": { "amount": 9.99, "currency": "USD" },
+    "image": "https://m.media-amazon.com/images/I/71c3pFtZywL._AC_AC_SY350_QL65_.jpg",
+    "reviews": {}
 }
 ```
 
-💡 Additionnal Resources: [List of HTTP status codes](https://wikipedia.org/wiki/List_of_HTTP_status_codes).
+</p>
+</details>
+
+Now, you know how to extract high quality data from webpages.
+But what if we want to extract lists, like search results, products lists, blog articles, etc ... ?
+That's the next topic 👇
+
+### 3. Iterate through lists
+
+The scrapingapi SDK allows you to extract every item that matches a selector. 
+Again, it's highly inspired by the jQuery API:
+
+```typescript
+$( <items selector> ).each( <values> );
+```
+
+Firstly, you have to provide the **items selector** which will match all the DOM elements you want to iterate.
+Then, you specify the values you want to extract for each element that will be iterated, like we've seen previously.
+
+💡 All the selectors you provide to extract the `values` will be executed inside the `items selector`.
+
+<details><summary>Show the Example</summary>
+<p>
+
+We can now extract every review item:
+
+```typescript
+page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders: true }, {
+
+    title: $("#title"),
+    price: $("#corePrice_feature_div .a-offscreen:first").filter("price"),
+    image: $("#main-image").attr("src").filter("url"),
+    reviews: {
+        rating: $(".cr-widget-Acr [data-hook='average-stars-rating-text']").optional(),
+        list: $("#cm-cr-dp-aw-review-list > [data-hook='mobley-review-content']").each({
+            author: $(".a-profile-name"),
+            title: $("[data-hook='review-title']")
+        })
+    }
+});
+```
+
+You will get the following result:
+
+```json
+{
+    "title": "sportbull Unisex 3D Printed Graphics Novelty Casual Short Sleeve T-Shirts Tees",
+    "price": { "amount": 9.99, "currency": "USD" },
+    "image": "https://m.media-amazon.com/images/I/71c3pFtZywL._AC_AC_SY350_QL65_.jpg",
+    "reviews": {
+        "rating": "4.4 out of 5",
+        "list": [
+            { "author": "Jon", "title": "Great shirt; very trippy" },
+            { "author": "LK", "title": "Birthday Gift for Bartender Son" },
+            { "author": "Yessica suazo", "title": "Decepcionada del producto que recibi" },
+            { "author": "Avid Reader", "title": "Worth it." },
+            { "author": "Nancy K", "title": "Husband loves it!" },
+            { "author": "Mychelle", "title": "Gets Noticed" },
+            { "author": "Suzy M. Lewis", "title": "Wish I had bought a size up" },
+            { "author": "Devann Shultz", "title": "Great buy!" }
+        ]
+    }
+}
+```
+
+</p>
+</details>
+
+## 5. Handle the Response
+
+TODO
 
 ### Optimize the response time
 
-Disable theses options as soon as you can:
+Every option uses additionnal CPU resources, slows down communication inside scrapingapi's network, and increase your response size.
 
-* extract
-* withBody
-* withHeaders
-
-While theses three features can be useful, it uses additionnal CPU resources, slows down communication between our proxies and our server and increase response size.
+That's why it's better do use as few options as possible to make your responses faster.
 
 ## Another example
+
+![https://wallpapercave.com/wp/wp4014371.jpg](https://wallpapercave.com/wp/wp4014371.jpg)
 
 Consider that `http://example.com/products` responds with a webpage containing the following HTML:
 
