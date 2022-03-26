@@ -1,5 +1,5 @@
 import Scraper, { $, TExtractedPrice } from '../src';
-const page = new Scraper('f47c66b8-35cb-43d2-bd9c-67a5ade5d51f');
+const page = new Scraper('API_KEY');
 
 type TAmazonResults = {
     

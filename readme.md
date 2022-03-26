@@ -38,6 +38,7 @@
 <p align="center">
     <a target="_blank" href="#simple-usage-example">
         <img src="media/sample_code.png" alt="How does ScraperAPI works" width="1000px" />
+        <img src="media/sample_result.png" alt="How does ScraperAPI works" width="1000px" />
     </a>
 </p>
 
@@ -106,7 +107,7 @@ page.get("https://www.google.com/search?q=bitcoin", { device: "desktop" }, {
 
 The `Scraper.get` method sends a **GET request** to the provided URL, and automatically extract the data you asked: the price and the results.
 
-![Google Search Example](https://raw.githubusercontent.com/scrapingapi/scraper/main/google-dom.jpg "Google Search Example")
+![Google Search Example](media/google-dom.jpg "Google Search Example")
 
 In the data parameter, you will get a [TScrapeResult](src/types.ts#L107) object, containing the scraping results.
 
@@ -236,11 +237,11 @@ Depending on your needs, you can change some settings for your request:
     ```
 * **withBody** (boolean): If you want to get the page HTML in the response. Default: `false`
     ```json
-    { withBody: true }
+    { "withBody": true }
     ```
 * **withHeaders** (boolean): If you want to retrieve the response headers. Default: `false`
     ```json
-    { withHeaders: true }
+    { "withHeaders": true }
     ```
 
 For POST requests only:
@@ -253,6 +254,8 @@ For POST requests only:
     ```json
     { "bodyType": "form" }
     ```
+
+#### Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -335,6 +338,8 @@ As you can see, we need two info:
 
 💡 **Tip**: If you just want to extract the context text of the element, calling `.attr( <attribute> )` is not required.
 It means that you could use `$( <selector> )` instead of `$( <selector> ).attr( <attribute> )`
+
+#### Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -423,8 +428,8 @@ page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders
     title: $("#title"),
     price: $("#corePrice_feature_div .a-offscreen:first").filter("price"),
                                                          ^^^^^^^^^^^^^^^^
-    image: $("#main-image").attr("src").filter("url")
-                                       ^^^^^^^^^^^^^^,
+    image: $("#main-image").attr("src").filter("url"),
+                                       ^^^^^^^^^^^^^^
     reviews: {
         rating: $(".cr-widget-Acr [data-hook='average-stars-rating-text']")
     }
@@ -469,6 +474,8 @@ Here are the reasons why a value could not be found:
 * The value is empty
 * The filter has rejected the value
 
+### Example
+
 <details><summary>Show the Example</summary>
 <p>
 
@@ -504,11 +511,13 @@ If `reviews.rating` has not been found, you will get the following data:
 </p>
 </details>
 
+### And next ?
+
 Now, you know how to extract high quality data from webpages.
 But what if we want to extract lists, like search results, products lists, blog articles, etc ... ?
 That's the next topic 👇
 
-### 3. Iterate through lists
+## 3. Iterate through lists
 
 The scrapingapi SDK allows you to extract every item that matches a selector. 
 Again, it's highly inspired by the jQuery API:
@@ -521,6 +530,22 @@ Firstly, you have to provide the **items selector** which will match all the DOM
 Then, you specify the values you want to extract for each element that will be iterated, like we've seen previously.
 
 💡 All the selectors you provide to extract the `values` will be executed inside the `items selector`.
+
+### The `this` selector
+
+In the `values`, if the selector is `"this"`, it will make reference to the items selector.
+
+By exemple:
+
+```type
+$("> ul.tags > li").each({
+    text: $("this")
+})
+```
+
+The `text` value will be the text content of every `"> ul.tags > li` element.
+
+### Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -571,13 +596,29 @@ You will get the following result:
 
 ## 5. Handle the Response
 
-TODO
+Every time you launch a request, you will receive a response following this format:
+
+```typescript
+type Response = {
+    // The final URL after all the redirections
+    url: string,
+    // The scraped page status code
+    status: number,
+    // The scraped page headers (must provide the withHeaders option)
+    headers?: { [key: string]: string },
+    // The page HTML (when the withBody option is true)
+    body?: string,
+    // The extracted data, if you provided extractors
+    data?: object
+```
 
 ### Optimize the response time
 
 Every option uses additionnal CPU resources, slows down communication inside scrapingapi's network, and increase your response size.
 
 That's why it's better do use as few options as possible to make your responses faster.
+
+-------
 
 ## Another example
 
@@ -653,20 +694,17 @@ type Product = {
     description?: string
 }
 
-scraper.get<Product[]>("http://example.com/products", {}, {
-    
-    $foreach: "#products > article.product",
+scraper.get<Product[]>("http://example.com/products", {}, $("#products > article.product").each({
 
-    name: ["> h3", "text", true],
-    image: ["> img", "src", true, "url"],
-    price: ["> .price", "text", true, "price"],
-    tags: {
-        $foreach: "> ul.tags > li",
-        text: ["this", "text", true]
-    },
-    description: ["> .details", "text", false]
+    name: $("> h3"),,
+    image: $("> img").attr("src").filter("url"),
+    price: $("> .price").filter("price"),
+    tags: $("> ul.tags > li").each({
+        text: $("this")
+    }),
+    description: $("> .details").optional()
 
-});
+}));
 ```
 
 Here is the response:
