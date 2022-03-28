@@ -13,7 +13,7 @@
 
 <div align="center">
  
-![version](https://img.shields.io/github/tag/scrapingapi/scraper)
+![version](https://img.shields.io/github/package-json/v/scrapingapi/scraper)
 [![npm](https://img.shields.io/npm/dm/scrapingapi)](https://www.npmjs.com/package/scrapingapi)
 [![discord](https://img.shields.io/discord/956821594372714546?label=Discord)](https://discord.gg/m7KWXcBaBu)
 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
