@@ -1,8 +1,19 @@
 import Scraper, { $, TExtractedPrice } from '../src';
-const page = new Scraper('API_KEY');
+const page = new Scraper('996ef6c0-e1ae-4ec1-85bd-b0dde74c9431');
+
+type TReview = {
+    author: string,
+    title: string
+}
 
 type TAmazonResults = {
-    
+    title: string,
+    price: TExtractedPrice,
+    image: string,
+    reviews: {
+        rating?: string,
+        list: TReview[]
+    }
 }
 
 // Scrape Amazon search results for "bitcoin"

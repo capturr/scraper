@@ -45,7 +45,7 @@ export type TFilter = typeof dataFilters[number];
 
 export type TValueExtractor = {
     select: TSelector,
-    attr: TAttribute,
+    attr?: TAttribute,
     required?: boolean,
     filters?: TFilter[]
 }
@@ -67,10 +67,7 @@ export class ValueExtractor {
 
     public constructor( select: TSelector ) {
         this.options = {
-            select,
-            attr: 'text', // Attribute by default: the text content of the element
-            required: true,
-            filters: []
+            select
         }
     }
 
@@ -85,10 +82,12 @@ export class ValueExtractor {
 
     public filter( filterName: TFilter ) {
 
-        if (this.options.filters.includes( filterName ))
+        if (this.options.filters === undefined)
+            this.options.filters = [filterName];
+        else if (this.options.filters.includes( filterName ))
             throw new Error(`The ${this.filter} filter has already be set for this selector.`);
-
-        this.options.filters.push(filterName);
+        else
+            this.options.filters.push(filterName);
 
         return this;
     }
@@ -111,7 +110,8 @@ export type TExtractedPrice = {
 export type TScrapeResult<TData extends any = any> = {
     url: string,
     status: number,
+    time: number,
     headers?: { [key: string]: string },
     body?: string,
-    data?: TData
+    data?: TData,
 }

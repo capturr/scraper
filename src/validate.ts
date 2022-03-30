@@ -120,7 +120,7 @@ export default (requests: TRequestWithExtractors | TObjetDonnees): TRequestWithE
 }
 
 export const isValueExtractor = (extract: TValueExtractor | TObjetDonnees): extract is TValueExtractor => 
-    ('select' in extract) && ('attr' in extract)
+    ('select' in extract)
 
 const validateExtractors = (extract: ValueExtractor | TValueExtractor | TObjetDonnees, path: string): TExtractor => {
 
@@ -142,11 +142,24 @@ const validateExtractors = (extract: ValueExtractor | TValueExtractor | TObjetDo
             }
         */
 
-        const { select, attr, required, filters } = extract;
+        const { 
+            select, 
+            attr = 'text', 
+            required = true, 
+            filters = [] 
+        } = extract;
 
-        if (typeof select !== "string" || typeof attr !== "string" || typeof required !== "boolean")
-            throw new BadRequest("When the " + path + " option is an array, it must contain at least 3 values: "
-                + "CSS select (string), attribute (string), required (boolean) and optionnaly filters (strings)");
+        if (typeof select !== 'string')
+            throw new BadRequest(`The ${path}.select option must be a string.`);
+
+        if (typeof attr !== 'string')
+            throw new BadRequest(`The ${path}.attr option must be a string.`);
+
+        if (typeof required !== 'boolean')
+            throw new BadRequest(`The ${path}.required option must be a boolean.`);
+
+        if (!Array.isArray( filters ))
+            throw new BadRequest(`The ${path}.filters option must be an array of strings.`);
 
         for (const filter of filters)
             if (!dataFilters.includes( filter ))

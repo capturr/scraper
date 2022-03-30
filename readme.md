@@ -115,6 +115,7 @@ In the data parameter, you will get a [TScrapeResult](src/types.ts#L107) object,
 {
     "url": "https://www.google.com/search?q=bitcoin",
     "status": 200,
+    "time": 2.930,
     "data": {
         "price": {
             "amount": 49805.02,
@@ -255,7 +256,7 @@ For POST requests only:
     { "bodyType": "form" }
     ```
 
-#### Example
+#### Practical Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -271,7 +272,7 @@ page.get("https://www.amazon.com/dp/B08L76BSZ5", { device: 'mobile', withHeaders
 
 ## 2. Extract your data
 
-We're now at the most interesting part: we'll how to extract, filter and iterate data.
+We're now at the most interesting part: how to extract & filter values, and how to iterate items.
 
 ```typescript 
 page.get( url, options, extractor );
@@ -282,19 +283,29 @@ page.get( url, options, extractor );
 
 Let's start with the basics: extract a single information from the webpage.
 
-To retrieve a value, we will use the `$` function. If you've already used jQuery, it should look a bit familiar :)
+Extractors are simple javascript objects, were you can associate a `key` (the name of your data) to a `value selector`.
+The following example will extract the text content of the element that matches given selector:
 
 ```typescript
-$( <selector> ).attr( <attribute> )
+{
+    <key>: $( <selector> )
+}
 ```
 
-As you can see, we need two info:
+Here you have two elements:
 
-1. The **Selector** of the element which contains the information you want to extract.
-    <details><summary>Show examples of selectors</summary>
+1. The **Key**: You can choose any name for the key, but it should not:
+
+* Start by a `$`
+* Be a reserved key: `select` is the one and only reserved key for the moment
+
+2. The **Selector** of the element which contains the information you want to extract. 
+    To create a value selector will use the `$()` function. If you've already used jQuery, it should look a bit familiar :)
+    And for the attribute you put in the `$()` function, it's a CSS-like / jQuery-like selector that matches the element you want to extract the value.
+    <details><summary>Show examples</summary>
     <p>
 
-    - `h3`: Simply matches all `h3` elements
+    - `$("h3")`: Simply matches all `h3` elements
         - Matches: 
             ```html
             <h3>This is a title</h3>
@@ -303,7 +314,7 @@ As you can see, we need two info:
             ```html
             <p>Hello</p>
             ```
-    - `a.myLink[href]`: Matches `a` elements having the class `myLink`, and where the `href` attribute is defined
+    - `$("a.myLink[href]")`: Matches `a` elements having the class `myLink`, and where the `href` attribute is defined
         - Matches: 
             ```html
             <a class="myLink anotherclass" href="https://scrapingapi.io">Link Text</a>
@@ -312,7 +323,7 @@ As you can see, we need two info:
             ```html
             <a class="thisClassIsAlone" href="https://scrapingapi.io">Link Text</a>
             ```
-    - `h2:contains('Scraping API') + div`: Matches `div` elements that are next to `h2` elements where the content is equal to `Scraping API`
+    - `$("h2:contains('Scraping API') + div")`: Matches `div` elements that are next to `h2` elements where the content is equal to `Scraping API`
         - Matches: 
             ```html
             <h2>Scraping API</h2>
@@ -331,15 +342,26 @@ As you can see, we need two info:
     </p>
     </details> 
 
-2. The **Attribute** of the element in which the data is defined. It includes:
-    - [Native HTML attributes](https://www.w3schools.com/tags/ref_attributes.asp): `href`, `class`, `src`, etc ...
-    - `"text"`: Get the element content text. Leading, trailing and repeated whitespaces will be removed, ans HTML entities are decoded.
-    - `"html"`: Get the element content html
+But instead of extracting the text content of the element, you can also extract the HTML content.
+For that, simply use the `.html()` method:
 
-💡 **Tip**: If you just want to extract the context text of the element, calling `.attr( <attribute> )` is not required.
-It means that you could use `$( <selector> )` instead of `$( <selector> ).attr( <attribute> )`
+```typescript
+{
+    <key>: $( <selector> ).html()
+                          ^^^^^^^
+}
+```
 
-#### Example
+It's also possible to extract any other [HTML attributes](https://www.w3schools.com/tags/ref_attributes.asp): `href`, `class`, `src`, etc ...
+
+```typescript
+{
+    <key>: $( <selector> ).attr( <attribute> )
+                           ^^^^^^^^^^^^^^^^^^^
+}
+```
+
+#### Practical Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -474,7 +496,7 @@ Here are the reasons why a value could not be found:
 * The value is empty
 * The filter has rejected the value
 
-### Example
+### Practical Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -545,7 +567,7 @@ $("> ul.tags > li").each({
 
 The `text` value will be the text content of every `"> ul.tags > li` element.
 
-### Example
+### Practical Example
 
 <details><summary>Show the Example</summary>
 <p>
@@ -604,6 +626,9 @@ type Response = {
     url: string,
     // The scraped page status code
     status: number,
+    // The time, in seconds, your request took to be resolved from our server
+    // The communication delays between your app and our servers are ignored
+    time: number,
     // The scraped page headers (must provide the withHeaders option)
     headers?: { [key: string]: string },
     // The page HTML (when the withBody option is true)

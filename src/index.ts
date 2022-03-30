@@ -26,7 +26,17 @@ export type { TExtractedPrice } from './types';
 
 type TOptions = Omit<TRequestWithExtractors, 'extract' | 'url' | 'method'>;
 
-const local = true;
+/*----------------------------------
+- VARIOUS DELCARATIONS
+----------------------------------*/
+
+const local = process.argv.includes('-local');
+
+class ApiError extends Error {
+    public constructor( public code: number, message: string ) {
+        super(message);
+    }
+}
 
 /*----------------------------------
 - SCRAPER
@@ -51,14 +61,18 @@ export default class Scraper {
                 requests: validate(requests)
             },
             json: true
-        }, (error, response, body) => {
+        }, (error, response) => {
+
+
+            if (response && response.statusCode !== 200)
+                error = new ApiError( response.statusCode, response.body );
 
             if (error) {
                 reject(error);
                 return;
             }
 
-            resolve(body);
+            resolve(response.body);
 
         }));
     }

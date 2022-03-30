@@ -22,6 +22,6 @@ page.get<TGoogleResults>("https://www.google.com/search?q=bitcoin", { device: "d
     })
 }).then( data => {
 
-    console.log("Here are the results:", data);
+    console.dir(data, { depth: null });
 
 });
