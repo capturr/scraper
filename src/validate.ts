@@ -124,8 +124,8 @@ export const isValueExtractor = (extract: TValueExtractor | TObjetDonnees): extr
 
 const validateExtractors = (extract: ValueExtractor | TValueExtractor | TObjetDonnees, path: string): TExtractor => {
 
-    if (!extract || typeof extract !== 'object')
-        throw new BadRequest("The " + path + " option must be an object or an array (" + typeof extract + " given).");
+    if (!extract || Array.isArray(extract) || typeof extract !== 'object')
+        throw new BadRequest("The " + path + " option must be an object (" + typeof extract + " given).");
         
     if (extract instanceof ValueExtractor)
         extract = extract.options;
@@ -157,7 +157,12 @@ const validateExtractors = (extract: ValueExtractor | TValueExtractor | TObjetDo
         /*
             extract: {
                 "$foreach": ".sh-dgr__content",
-                "name": ["h4", "text", true, "title"],
+                "name": { 
+                    select: "h4", 
+                    attr: "text", 
+                    required: true, 
+                    filters: ["title"] 
+                }
                 ...
             }
         */

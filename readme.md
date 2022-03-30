@@ -59,7 +59,7 @@
 
 <p align="center">
     Do you like this project ? Please let me know,
-    <a href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give a Star :)</b></a>
+    <a target="_blank href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give a Star :)</b></a>
 </p>
 
 ------------
@@ -75,7 +75,7 @@
     yarn add --save scrapingapi
     ```
 
-2. Create your free **API Key** on [scrapingapi.io](https://scrapingapi.io/?utm_source=github&utm_medium=readme&utm_campaign=getstarted)
+2. Create your free [API Key](https://scrapingapi.io/?utm_source=github&utm_medium=readme&utm_campaign=getstarted)
 
 3. Make your first request (example below 👇)
 
