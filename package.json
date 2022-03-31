@@ -1,7 +1,7 @@
 {
     "name": "scrapingapi",
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
-    "description": "Simple & Human-Friendly HTML Scraper with Json-ld support",
+    "description": "One API to scrape All the Web.",
     "keywords": [
         "scraping",
         "crawler",
@@ -18,7 +18,7 @@
         "extract",
         "data"
     ],
-    "version": "0.2.1-1",
+    "version": "0.3",
     "license": "MIT",
     "private": false,
     "main": "bin/index.js",
