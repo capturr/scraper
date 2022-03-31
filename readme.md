@@ -116,6 +116,7 @@ In the data parameter, you will get a [TScrapeResult](src/types.ts#L107) object,
     "url": "https://www.google.com/search?q=bitcoin",
     "status": 200,
     "time": 2.930,
+    "bandwidth": 26.33,
     "data": {
         "price": {
             "amount": 49805.02,
@@ -633,15 +634,17 @@ type Response = {
     url: string,
     // The scraped page status code
     status: number,
-    // The time, in seconds, your request took to be resolved from our server
-    // The communication delays between your app and our servers are ignored
-    time: number,
     // The scraped page headers (must provide the withHeaders option)
     headers?: { [key: string]: string },
     // The page HTML (when the withBody option is true)
     body?: string,
     // The extracted data, if you provided extractors
-    data?: object
+    data?: object;
+    // The time, in seconds, your request took to be resolved from our server
+    // The communication delays between your app and our servers are ignored
+    time: number,
+    // The used bandwidth, in kb
+    bandwidth: number,
 ```
 
 ### Optimize the response time

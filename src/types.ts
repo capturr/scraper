@@ -8,6 +8,21 @@ export const dataFilters = ["url", 'price'];
 export const devices = ['desktop', 'tablet', 'mobile'];
 
 /*----------------------------------
+- GLOBAL CONFIGURATION TYPES
+----------------------------------*/
+
+export type TAdapter = (options: {
+    method: string, 
+    url: string, 
+    headers: {[k: string]: string},
+    body: {[k: string]: any}
+}) => Promise<TScrapeResult[]>;
+
+export type TGlobalOptions = {
+    adapter?: TAdapter
+}
+
+/*----------------------------------
 - REQUEST CONFIGURATION TYPES
 ----------------------------------*/
 
@@ -110,8 +125,9 @@ export type TExtractedPrice = {
 export type TScrapeResult<TData extends any = any> = {
     url: string,
     status: number,
-    time: number,
     headers?: { [key: string]: string },
     body?: string,
     data?: TData,
+    time: number,
+    bandwidth: number,
 }

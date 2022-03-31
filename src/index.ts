@@ -14,11 +14,15 @@ export { default as validate } from './validate';
 ----------------------------------*/
 
 import {
+
+    TGlobalOptions,
+    TAdapter,
+
     TRequestWithExtractors,
     TRequestWithBody,
-    TExtractor,
     TScrapeResult,
 
+    TExtractor,
     ValueExtractor
 } from './types';
 
@@ -38,19 +42,34 @@ class ApiError extends Error {
     }
 }
 
+const defaultAdapter: TAdapter = (options) => new Promise((resolve, reject) => request({
+    ...options,
+    json: true
+}, (error, response) => {
+
+    if (response && response.statusCode !== 200)
+        error = new ApiError( response.statusCode, response.body );
+
+    if (error) {
+        reject(error);
+        return;
+    }
+
+    resolve(response.body);
+
+}));
+
 /*----------------------------------
 - SCRAPER
 ----------------------------------*/
 export default class Scraper {
 
-    public constructor( public apiKey: string ) {}
+    public constructor( public apiKey: string, private options: TGlobalOptions = {} ) {}
 
     public scrape<TData extends any = any>( requests: TRequestWithExtractors[] ): Promise<TScrapeResult<TData>[]> {
-
-        //console.dir(validate(requests), { depth: null });
-        
-        return new Promise((resolve, reject) => request({
-            method: 'POST',
+        const sendRequest = this.options.adapter || defaultAdapter;
+        return sendRequest({
+            method: 'POST', 
             url: local ? 'http://localhost:3011/v0' : 'https://scrapingapi.io/v0',
             headers: {
                 'content-type': 'application/json',
@@ -60,20 +79,7 @@ export default class Scraper {
             body: {
                 requests: validate(requests)
             },
-            json: true
-        }, (error, response) => {
-
-            if (response && response.statusCode !== 200)
-                error = new ApiError( response.statusCode, response.body );
-
-            if (error) {
-                reject(error);
-                return;
-            }
-
-            resolve(response.body);
-
-        }));
+        });
     }
 
     public get<TData extends any = any>( 
