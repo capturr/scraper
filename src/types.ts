@@ -2,20 +2,22 @@
 - CONST
 ----------------------------------*/
 
-export const allowedMethods = ["GET", "POST"];
-export const bodyTypes = ["form", "json"];
-export const dataFilters = ["url", 'price'];
-export const devices = ['desktop', 'tablet', 'mobile'];
+export const allowedMethods = ["GET", "POST"] as const;
+export const bodyTypes = ["form", "json"] as const;
+export const dataFilters = ["url", 'price'] as const;
+export const devices = ['desktop', 'tablet', 'mobile'] as const;
 
 /*----------------------------------
 - GLOBAL CONFIGURATION TYPES
 ----------------------------------*/
 
 export type TAdapter = (options: {
-    method: string, 
+    method: HttpMethod, 
     url: string, 
     headers: {[k: string]: string},
-    body: {[k: string]: any}
+    body: {
+        requests: TRequestWithExtractors[]
+    }
 }) => Promise<TScrapeResult[]>;
 
 export type TGlobalOptions = {
@@ -95,20 +97,33 @@ export class ValueExtractor {
         return { $foreach: this.options.select, items: values };
     }
 
-    public filter( filterName: TFilter ) {
+    public filter( ...filterNames: TFilter[] ) {
 
         if (this.options.filters === undefined)
-            this.options.filters = [filterName];
-        else if (this.options.filters.includes( filterName ))
-            throw new Error(`The ${this.filter} filter has already be set for this selector.`);
-        else
-            this.options.filters.push(filterName);
+            this.options.filters = filterNames;
+        else 
+            for (const filterName of filterNames) {
+                if (this.options.filters.includes( filterName ))
+                    throw new Error(`The ${this.filter} filter has already be set for this selector.`);
+                else
+                    this.options.filters.push(filterName);
+            }
 
         return this;
     }
 
     public optional( isOptional: boolean = true ) {
         this.options.required = !isOptional;
+        return this;
+    }
+
+    public html() {
+        this.options.attr = 'html';
+        return this;
+    }
+
+    public text() {
+        this.options.attr = 'html';
         return this;
     }
 
