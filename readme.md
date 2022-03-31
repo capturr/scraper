@@ -59,7 +59,7 @@
 
 <p align="center">
     Do you like this project ? Please let me know,
-    <a target="_blank href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give a Star :)</b></a>
+    <a target="_blank" href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give it a Star :)</b></a>
 </p>
 
 ------------
@@ -159,7 +159,14 @@ type BitcoinGoogleResults = {
 page.get<BitcoinGoogleResults>("https://www.google.com/search?q=bitcoin").then( ... );
 ```
 
-------------------
+-----------
+
+<p align="center">
+    Do you like this project ? Please let me know,
+    <a target="_blank" href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give it a Star :)</b></a>
+</p>
+
+------------
 
 # Documentation / Guide
 
@@ -643,7 +650,14 @@ Every option uses additionnal CPU resources, slows down communication inside scr
 
 That's why it's better do use as few options as possible to make your responses faster.
 
--------
+-----------
+
+<p align="center">
+    Do you like this project ? Please let me know,
+    <a target="_blank" href="https://github.com/scrapingapi/scraper/stargazers"><b>⭐ Give it a Star :)</b></a>
+</p>
+
+------------
 
 ## Another example
 

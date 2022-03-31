@@ -1,5 +1,5 @@
 import Scraper, { $, TExtractedPrice } from '../src';
-const page = new Scraper('996ef6c0-e1ae-4ec1-85bd-b0dde74c9431');
+const page = new Scraper('API_KEY');
 
 type TReview = {
     author: string,

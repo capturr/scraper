@@ -63,7 +63,6 @@ export default class Scraper {
             json: true
         }, (error, response) => {
 
-
             if (response && response.statusCode !== 200)
                 error = new ApiError( response.statusCode, response.body );
 
