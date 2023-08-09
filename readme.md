@@ -1,3 +1,6 @@
+--------------
+# This project has been moved to [datasaucer/api](https://github.com/datasaucer/api).
+------
 <p align="center">
     <a href="https://scrapingapi.io/?utm_source=github&utm_medium=readme&utm_campaign=logo" target="_blank">
         <img src="media/logo_text.png" alt="ScrapingAPI Logo" />
